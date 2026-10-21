@@ -1,0 +1,93 @@
+<div id="rs-lab"><div class="workspace-options" aria-label="Choose optional panels">
+<div><strong>Choose your workspace</strong><span class="muted">Core plots stay visible. Add details when you need them.</span></div>
+<div class="option-list">
+<label><input type="checkbox" id="show-architecture"> Architecture</label>
+<label><input type="checkbox" id="show-correction"> Residual correction</label>
+<label><input type="checkbox" id="show-values"> Exact signals</label>
+<label><input type="checkbox" id="show-heatmaps"> Weights and gradients</label>
+<label><input type="checkbox" id="show-slices"> One-weight experiment</label>
+</div></div>
+
+<section class="lab-panel" hidden="" id="rs-configuration-panel"><h2>Architecture and training data</h2>
+<div class="preset-row"><span>Start a new comparison:</span><button class="btn" id="preset-deep" type="button">Deep · 36 × 10</button><button class="btn" id="preset-small" type="button">Small · 3 × 2</button><span class="muted">Presets reset both models.</span></div><div class="rs-setup">
+<label class="form-label">Hidden blocks <select class="form-select" id="rs-depth"><option>3</option><option>12</option><option>24</option><option selected="">36</option></select></label>
+<label class="form-label">Initialization seed <input class="form-control" id="rs-seed" max="999" min="1" type="number" value="7"/></label>
+</div>
+<div class="rs-inputs rs-architecture-controls">
+<div class="rs-control"><div class="rs-control-heading"><label for="rs-width-all">Set all hidden widths <span id="rs-width-mixed"></span></label><input aria-label="All hidden widths numeric value" class="form-control rs-number" id="rs-width-all-number" max="32" min="1" type="number" value="10"/></div><input aria-label="Set all hidden widths" class="form-range" id="rs-width-all" max="32" min="1" type="range" value="10"/><button class="btn" id="rs-apply-width" type="button">Apply this width to all</button></div>
+<div class="rs-control"><div class="rs-control-heading"><label for="rs-samples">Training examples</label><input aria-label="Training example count" class="form-control rs-number" id="rs-samples-number" max="4096" min="128" step="128" type="number" value="1024"/></div><input aria-label="Training examples" class="form-range" id="rs-samples" max="4096" min="128" step="128" type="range" value="1024"/></div>
+</div>
+<label class="width-toggle"><input type="checkbox" id="show-widths"> Adjust individual layer widths</label><section class="lab-panel" hidden="" id="rs-width-details"><h3>Individual widths: stem and each hidden block</h3><div class="rs-width-grid" id="rs-width-controls"></div></section>
+<div class="rs-note" id="rs-architecture"></div>
+<div class="rs-note" id="rs-shortcuts"></div>
+<div class="rs-note">Changing widths, depth, sample count, or seed resets both networks. The input remains 2D and the final output remains one number.</div>
+</section>
+<div class="rs-actions training-toolbar"><button class="btn btn-primary" id="rs-step" type="button">One update</button><button class="btn" id="rs-run" type="button">Train 100 updates</button><button class="btn" id="rs-run-500" type="button">Train 500 updates</button><button class="btn" id="rs-run-1000" type="button">Train 1,000 updates</button><button class="btn" id="rs-pause" type="button" disabled>Pause</button>
+<button class="btn" id="rs-init" type="button">Reset weights</button><div class="run-status"><progress id="rs-progress" max="1" value="0" aria-label="Requested training updates completed"></progress><span id="rs-run-status" role="status">Ready. Each update uses a batch of up to 128 examples.</span></div><span aria-live="polite" id="rs-info"></span></div>
+<section class="lab-panel" id="rs-input-panel"><h2>Follow one input</h2>
+<div class="rs-inputs">
+<div class="rs-control"><div class="rs-control-heading"><label for="rs-x">Input x₁</label><input aria-label="Input x1 numeric value" class="form-control rs-number" id="rs-x-value" max="2" min="-2" step="0.05" type="number" value="0.50"/></div><input aria-label="Input x1 slider" class="form-range" id="rs-x" max="2" min="-2" step="0.05" type="range" value="0.5"/></div>
+<div class="rs-control"><div class="rs-control-heading"><label for="rs-y">Input x₂</label><input aria-label="Input x2 numeric value" class="form-control rs-number" id="rs-y-value" max="2" min="-2" step="0.05" type="number" value="-0.50"/></div><input aria-label="Input x2 slider" class="form-range" id="rs-y" max="2" min="-2" step="0.05" type="range" value="-0.5"/></div>
+</div>
+<div class="rs-control rs-layer-control"><div class="rs-control-heading"><label for="rs-layer">Feature cloud after <span id="rs-layer-value"></span></label><input aria-label="Feature block number; zero is the stem" class="form-control rs-number" id="rs-layer-number" max="36" min="0" type="number" value="36"/></div><input class="form-range" id="rs-layer" max="36" min="0" type="range" value="36"/></div>
+<div class="rs-note" id="rs-range"></div>
+</section>
+<section class="lab-panel" id="rs-views-panel"><h2>Feature maps through the network</h2>
+<div class="rs-plots rs-feature-grid">
+<section><h3>Input coordinates</h3><svg aria-label="Grid of input points; selected example highlighted" class="rs-feature-plot" id="rs-input" role="img"></svg><p class="rs-feature-caption" id="rs-input-caption"></p></section>
+<section><h3>Plain network · hidden features</h3><svg aria-label="Hidden features of the input grid" class="rs-feature-plot" id="rs-plain" role="img"></svg><p class="rs-feature-caption" id="rs-plain-caption"></p></section>
+<section><h3>Residual network · hidden features</h3><svg aria-label="Residual hidden features of the input grid" class="rs-feature-plot" id="rs-res" role="img"></svg><p class="rs-feature-caption" id="rs-res-caption"></p></section>
+<section hidden="" id="rs-correction-panel"><h3 id="rs-correction-title">Selected block · added correction αF(h)</h3><svg aria-describedby="rs-correction-caption rs-correction-selected" aria-labelledby="rs-correction-title" class="rs-feature-plot" id="rs-correction" role="img"></svg><p class="rs-feature-caption" id="rs-correction-caption"></p><p class="rs-correction-details" id="rs-correction-selected"></p></section>
+</div><h2>Final predictions in input space</h2><div class="rs-surface-grid" id="rs-predictions"><section><h3>Target surface + training data</h3><canvas aria-label="Target function with training points" class="rs-surface" id="rs-target-surface" role="img">Target function and training points in three dimensions.</canvas><p class="rs-surface-summary" id="rs-target-summary"></p></section><section><h3>Plain network · final prediction</h3><canvas aria-label="Plain network final scalar prediction over the original inputs x1 and x2" class="rs-surface" id="rs-plain-surface" role="img">Plain network final prediction in three dimensions.</canvas><p class="rs-surface-summary" id="rs-plain-summary"></p></section><section><h3>Residual network · final prediction</h3><canvas aria-label="Residual network final scalar prediction over the original inputs x1 and x2" class="rs-surface" id="rs-res-surface" role="img">Residual network final prediction in three dimensions.</canvas><p class="rs-surface-summary" id="rs-res-summary"></p></section></div>
+<div class="rs-camera-controls"><span>Drag a surface to rotate all three.</span><button aria-label="Rotate all surfaces left" class="btn" id="rs-view-left" type="button">Rotate left</button><button aria-label="Rotate all surfaces right" class="btn" id="rs-view-right" type="button">Rotate right</button></div>
+<p class="rs-note" id="rs-surface-range"></p>
+</section>
+<div aria-live="polite" class="rs-loss" id="rs-loss"></div>
+<section class="lab-panel" hidden="" id="rs-values-panel"><h2>Exact signal values at the selected input</h2>
+<div class="table-responsive"><table class="table"><thead><tr><th>Signal location</th><th>Plain: exact values</th><th>Residual: exact values</th></tr></thead><tbody id="rs-values"></tbody></table></div>
+</section>
+<section class="rs-inspector" hidden="" id="rs-inspector">
+<section class="lab-panel" id="rs-parameter-panel"><h2>Parameter selection and gradient examples</h2>
+<div class="rs-inputs">
+<div class="rs-control"><div class="rs-control-heading"><label for="rs-inspect-layer">Inspect <span id="rs-inspect-layer-label">stem</span></label><input aria-label="Inspected parameter layer" class="form-control rs-number" id="rs-inspect-layer-number" max="37" min="0" type="number" value="0"/></div><input aria-label="Parameter layer: stem through output head" class="form-range" id="rs-inspect-layer" max="37" min="0" type="range" value="0"/></div>
+
+</div>
+<div class="rs-inspect-controls">
+<label class="form-label">Parameter <select class="form-select" id="rs-tensor"><option value="w">Main weights W</option><option value="b">Bias b</option><option value="skip">Shortcut weights P</option></select></label>
+<label class="form-label">Output row <input class="form-control" id="rs-weight-row" max="1" min="0" type="number" value="0"/></label>
+<label class="form-label">Input column <input class="form-control" id="rs-weight-col" max="1" min="0" type="number" value="0"/></label>
+</div>
+<p class="rs-note" id="rs-gradient-context"></p>
+</section>
+<section class="lab-panel" hidden="" id="rs-heatmap-panel"><h2>Weight and gradient heatmaps</h2>
+<div class="rs-heatmaps">
+<section><h3>Plain · parameter values</h3><svg aria-label="Plain network parameter heatmap" class="rs-heatmap" id="rs-plain-weights" role="img"></svg></section>
+<section><h3>Plain · gradients</h3><svg aria-label="Plain network signed gradient heatmap" class="rs-heatmap" id="rs-plain-gradients" role="img"></svg></section>
+<section><h3>Residual · parameter values</h3><svg aria-label="Residual network parameter heatmap" class="rs-heatmap" id="rs-res-weights" role="img"></svg></section>
+<section><h3>Residual · gradients</h3><svg aria-label="Residual network signed gradient heatmap" class="rs-heatmap" id="rs-res-gradients" role="img"></svg></section>
+</div>
+<p class="rs-note">Click a cell, or use the row and column fields (indices start at 0). <span class="rs-negative-key">■</span> Negative · neutral = zero · <span class="rs-positive-key">■</span> Positive. Each pair shares a color scale; weights and gradients have separate scales.</p>
+<p aria-live="polite" class="rs-note" id="rs-heatmap-values"></p><p class="rs-note" id="rs-heatmap-hover">Point to a cell for its exact value.</p>
+</section>
+<section class="lab-panel" hidden="" id="rs-slice-panel"><h2>One-example loss versus the selected parameter</h2>
+<p class="rs-note" id="rs-example-context"></p>
+<div class="rs-inputs">
+<div class="rs-control"><div class="rs-control-heading"><label for="rs-sweep-radius">Sweep radius <span id="rs-sweep-radius-value">0.50</span></label></div><input class="form-range" id="rs-sweep-radius" max="3" min="0.01" step="0.01" type="range" value="0.5"/></div>
+<div class="rs-control"><div class="rs-control-heading"><label for="rs-preview-offset">Preview change Δw</label><input aria-label="Preview parameter change, without saving" class="form-control rs-number" id="rs-preview-number" max="0.5" min="-0.5" step="0.001" type="number" value="0"/></div><input aria-label="Preview a parameter change in both networks" class="form-range" id="rs-preview-offset" max="0.5" min="-0.5" step="0.001" type="range" value="0"/></div>
+</div>
+<div class="rs-diagnostic-row">
+<section><h3>Plain · single-example loss</h3><svg aria-label="Plain single-example loss versus one parameter" class="rs-diagnostic-chart" id="rs-plain-slice" role="img"></svg><p class="rs-note" id="rs-plain-slice-summary"></p></section>
+<section><h3>Residual · single-example loss</h3><svg aria-label="Residual single-example loss versus one parameter" class="rs-diagnostic-chart" id="rs-res-slice" role="img"></svg><p class="rs-note" id="rs-res-slice-summary"></p></section>
+</div>
+<p class="rs-note">Filled dot: current parameter · open diamond: preview · dashed tangent: current single-example gradient. Only the chosen parameter varies along each curve. Previewing leaves both models unchanged.</p>
+<div class="rs-actions"><button class="btn btn-primary" id="rs-example-step" type="button">Train both networks once on this example</button></div>
+<p class="rs-note">Uses the input x₁ and x₂ controls above and the target function’s label. Updates all trainable parameters with Adam 0.003 and its existing optimizer state, then redraws the curves. The example is not appended to the training set.</p>
+<p aria-live="polite" class="rs-note" id="rs-example-result"></p>
+</section>
+</section>
+<div class="rs-diagnostic-row" id="rs-training-diagnostics">
+<div class="rs-diagnostic-toolbar"><label class="form-label">Gradient examples <select class="form-select" id="rs-gradient-source"><option value="batch">Latest training batch</option><option value="full">Full training set</option><option value="single">Selected single example</option></select></label><label class="form-label">Gradient magnitude <select class="form-select" id="rs-gradient-measure"><option value="norm">Frobenius norm</option><option value="rms">RMS per weight</option></select></label></div>
+<section class="lab-panel" id="rs-loss-panel"><h2>Final-output MSE · log scale</h2><svg aria-label="Training and fixed-grid MSE over optimizer updates" class="rs-diagnostic-chart" id="rs-loss-chart" role="img"></svg><p class="rs-note" id="rs-history-summary"></p></section>
+<section class="lab-panel" id="rs-norm-panel"><h2>Weight-gradient magnitude by layer · log scale</h2><svg aria-label="Gradient norm or RMS across all layers" class="rs-diagnostic-chart" id="rs-gradient-chart" role="img"></svg><p class="rs-note" id="rs-norm-summary"></p></section>
+</div>
+</div>

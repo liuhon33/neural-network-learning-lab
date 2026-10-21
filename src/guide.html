@@ -1,0 +1,44 @@
+<p><a class="btn btn-primary" href="index.html">Open the lab</a></p>
+<p>You do not need to install anything. A modern desktop browser is best for comparing plots side by side; the page also works on a phone. The networks train on your own device, so speed depends on your hardware. Keep the tab open: refreshing or closing it discards the current models and training history.</p>
+<h2>Your first five minutes</h2>
+<ol>
+<li><strong>Inspect the starting point.</strong> The default is 36 hidden blocks with 10 features each, seed 7, and 1,024 training examples. Both networks start from matching main weights. Read the gradient plot at the bottom before any training.</li>
+<li><strong>Follow an input.</strong> Move x₁ and x₂. The highlighted dot shows where that input maps in each network. Move the block slider from the stem (0) to block 36 to trace its path through depth.</li>
+<li><strong>Train 500 updates.</strong> Watch the progress bar, final prediction surfaces, loss history, and gradients. Pause at any time. The next training button adds that many more updates; it does not reset the model.</li>
+<li><strong>Compare the surfaces.</strong> The left surface is the target with the actual training samples. The other surfaces are the final predictions. Drag one to rotate all three, or use the rotation buttons.</li>
+<li><strong>Test a hypothesis.</strong> Enable Architecture, try the small 3 × 2 preset, or change one width. This resets both models. Compare their behavior with the deep default.</li>
+</ol>
+<h2>Choose what you want to inspect</h2>
+<p>Feature maps, prediction surfaces, loss history, and layerwise gradients stay visible. The workspace checkboxes add optional panels without resetting either model.</p>
+<ul>
+<li><strong>Architecture:</strong> choose 3, 12, 24, or 36 hidden blocks, widths from 1 to 32, a seed, and a training-set size from 128 to 4,096. You can set all widths together or enable individual widths, including the stem. Architecture, seed, and sample-count changes reset both networks.</li>
+<li><strong>Residual correction:</strong> see the scaled added correction αF(h) for the selected block. Its PCA and scale are separate from those of the hidden features. The cross marks zero correction. The stem has no residual branch.</li>
+<li><strong>Exact signals:</strong> read the full feature vector for the selected input after every block, followed by the scalar prediction and target.</li>
+<li><strong>Weights and gradients:</strong> choose a parameter layer from stem through output head. Inspect a main weight matrix W, bias vector b, or learned shortcut P. Click a heatmap cell or use the row and column fields; indices start at zero. Hover for an exact value. Numeric color bars show the signed range.</li>
+<li><strong>One-weight experiment:</strong> pause training, choose an input and parameter, then sweep that one parameter while every other parameter stays fixed. Read the current dot, tangent gradient, and preview diamond. The preview slider never saves the change.</li>
+</ul>
+<h2>Updates, examples, and reset are different</h2>
+<p><strong>Train 100 / 500 / 1,000 updates</strong> performs that many additional optimizer steps. Each normal step uses up to 128 training examples, with the same shuffled batch given to both networks. An epoch means one pass through the training set; 1,024 examples take eight normal updates per epoch. Changing the dataset size changes that relationship.</p>
+<p><strong>Pause</strong> retains the weights, Adam state, and history. <strong>Reset weights</strong> returns both networks to initialization using the current architecture and seed, clears training history, and resets Adam. The optimizer in this release is fixed to Adam with learning rate 0.003.</p>
+<p><strong>Train both networks once on this example</strong> is an explicit training action. It uses the selected (x₁, x₂), with the target function's value as the label, and updates all trainable parameters in both networks using their existing Adam state. It does not update just the highlighted weight, and it does not append the example to the dataset. The displayed one-example loss can increase after a step because Adam also uses its accumulated moments.</p>
+<h2>Read the plots correctly</h2>
+<ul>
+<li><strong>Feature points are activations, not weights.</strong> The 289 probe inputs form a fixed 17 × 17 grid. Lines connect original neighbors, even if their hidden representations become distorted.</li>
+<li><strong>PCA is a view, not part of training.</strong> For more than two hidden features, one shared PCA is fitted to the two networks' pooled probe features. It is refitted after updates; signs are aligned, but axes can rotate. The displayed percentages measure how much of each network's centered variance survives the 2D projection. For one or two features, direct coordinates are shown.</li>
+<li><strong>The surfaces always show the final scalar prediction.</strong> Moving the hidden-block slider changes the feature view, not the depth of the output surface. Only the final output is supervised; hidden layers are not each trained to predict the target independently.</li>
+<li><strong>Loss history uses fixed evaluation sets.</strong> Solid lines show MSE on every training example; dashed lines show MSE on a separate fixed 25 × 25 evaluation grid. Blue circles identify the plain network; orange squares identify the residual network. Neither curve is a moving average. The grid is useful for exploration but is not an untouched test set for a formal benchmark.</li>
+<li><strong>Gradients depend on examples.</strong> Select the latest training batch, the full training set, or your selected single example. Gradients are recomputed at the current weights. The plot shows main-weight Frobenius norms or RMS per weight, excluding biases; learned shortcut gradients have extra markers. These are raw derivatives, not Adam's eventual parameter changes.</li>
+<li><strong>Heatmap colors are relative to the displayed pair.</strong> Plain and residual parameter values share one scale; their gradients share another. Compare numeric limits before comparing different layers. A tiny gradient can have a strong color when all gradients in its displayed pair are tiny.</li>
+<li><strong>Log axes express ratios.</strong> Each unit of exponent is a tenfold change. Exact zero cannot be logged and is placed at the stated adaptive floor; tiny positive values are retained.</li>
+<li><strong>A one-weight curve is a conditional slice.</strong> It is not the full loss landscape, and a flat slice does not prove that no joint parameter change could help.</li>
+</ul>
+<h2>Three experiments to try</h2>
+<ol>
+<li><strong>Depth and gradient transport.</strong> At initialization, compare the early and late gradients at 3, 12, and 36 blocks with width 10 and the same seed. Train each for the same number of updates. Does the early gradient tell the whole story?</li>
+<li><strong>Bottlenecks.</strong> Narrow one intermediate block, leaving the others wide. Look at the feature cloud, variance retained, and final surface. Width-changing residual blocks use learned projection shortcuts, so the residual model now has extra parameters.</li>
+<li><strong>Local sensitivity.</strong> Pause, enable weights and the one-weight experiment, choose the selected-example gradient source, then compare an early weight with a late weight. Does the tangent match the signed heatmap value? Try another input.</li>
+</ol>
+<blockquote>Residual connections often help signals and gradients travel through depth. They do not guarantee lower loss or successful learning for every initialization, architecture, or training setup. Use these plots to make and test explanations, rather than treating one run as a proof.</blockquote>
+<h2>Slow device or unexpected results?</h2>
+<p>Pause, disable optional panels, and try fewer samples or the small preset. These architecture changes start a new comparison. Background tabs may run more slowly. If a non-finite loss stops training, reset the weights. For a reproducible issue, record the architecture, individual widths, seed, sample count, update count, gradient source, selected input, and browser; include a screenshot if helpful.</p>
+<p>For formulas, implementation choices, verification, and ideas for extending the lab, read the <a href="https://github.com/liuhon33/neural-network-learning-lab/blob/main/docs/architecture.md" target="_blank" rel="noopener">technical guide</a>. The repository is MIT licensed, so students can fork it, change the target function, and build new experiments.</p>
