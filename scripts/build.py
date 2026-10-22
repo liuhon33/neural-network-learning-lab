@@ -12,7 +12,7 @@ def page(title, content, *, script="", guide=False):
     styles = read("lab.css") + "\n" + read("site.css")
     nav = ('<a href="index.html">Open lab</a>' if guide else
            '<a href="#rs-views-panel">Feature maps</a><a href="#rs-training-diagnostics">Learning curves</a>')
-    heading = "How to use the lab" if guide else "See what changes as a network learns."
+    heading = "How to use the lab" if guide else "See how deep networks learn—and why ResNets help."
     intro = ("A hands-on guide to signals, gradients, and residual connections." if guide else
              "Train a plain network and a residual network on the same landscape. Follow the signals, inspect the weights, and test your own explanations.")
     return f'''<!doctype html>
