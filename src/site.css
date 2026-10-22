@@ -7,6 +7,12 @@
 @media(max-width:420px){main,.site-header,.site-footer{padding:14px}#rs-lab .training-toolbar{padding:12px}#rs-lab .training-toolbar>.btn{flex:1 1 110px}#rs-lab .workspace-options{padding:12px}#rs-lab .rs-setup{flex-direction:column;align-items:stretch}#rs-lab .rs-heatmaps{grid-template-columns:1fr}.site-header nav{gap:12px 18px}.brand{width:100%}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 /* Reserve space for the fixed controls so plots and anchor targets stay clear. */
+#rs-lab #rs-input{touch-action:none;user-select:none;cursor:crosshair}
+#rs-lab #rs-input [data-input-handle],#rs-lab #rs-input .rs-selected-point{cursor:grab}
+#rs-lab #rs-input.is-dragging,#rs-lab #rs-input.is-dragging *{cursor:grabbing}
+#rs-lab #rs-input:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:4px}
+#rs-lab .rs-point-readout{display:block;font:500 16px/1.5 var(--font-mono);font-variant-numeric:tabular-nums;margin:6px 0}
+#rs-lab .rs-point-help{font-size:14px;margin:6px 0 12px}
 html:has(.lab-page){scroll-padding-top:calc(var(--training-dock-height,210px) + 32px)}
 .lab-page{--workspace-rail:280px;padding-left:var(--workspace-rail);padding-top:calc(var(--training-dock-height,210px) + 24px)}
 #rs-lab .workspace-options{position:fixed;left:16px;top:16px;width:calc(var(--workspace-rail) - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;z-index:25;padding:20px 16px;margin:0}

@@ -23,6 +23,7 @@ The [separate student guide](https://liuhon33.github.io/neuro-network-visualizer
 - One, 100, 500, or 1,000 additional updates, with progress and pause. Training uses matching shuffled batches and Adam at 0.003.
 - A left workspace sidebar and a larger training bar that stays visible while scrolling. On narrow screens, the Workspace button opens the sidebar.
 - Live shared PCA for hidden features wider than two dimensions, synchronized surface rotation, and explicit one-example training.
+- Drag or tap the input grid to choose the example followed throughout both networks. Arrow keys provide small adjustments; coordinates stay visible below the grid.
 
 This release contains the dense function-regression inspection lab. It does not include ImageNet, CNNs, pretrained models, or the separate optimizer-comparison experiment. Residual connections are useful to study, but are not a guarantee that every run succeeds. This is an educational experiment, not a benchmark claim.
 

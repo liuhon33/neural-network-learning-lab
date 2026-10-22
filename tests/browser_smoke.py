@@ -94,6 +94,20 @@ try:
     def click(id):
         evaluate(f'document.getElementById({json.dumps(id)}).click()')
 
+    def grid_pixel(x,y):
+        return evaluate(f"(()=>{{const p=new DOMPoint(125+45*({x}),111-45*({y})).matrixTransform(Q('rs-input').getScreenCTM());return{{x:p.x,y:p.y}}}})()")
+
+    def mouse_drag(start,end):
+        call('Input.dispatchMouseEvent',{'type':'mousePressed',**grid_pixel(*start),'button':'left','buttons':1,'clickCount':1})
+        call('Input.dispatchMouseEvent',{'type':'mouseMoved',**grid_pixel((start[0]+end[0])/2,(start[1]+end[1])/2),'button':'left','buttons':1})
+        call('Input.dispatchMouseEvent',{'type':'mouseMoved',**grid_pixel(*end),'button':'left','buttons':1})
+        call('Input.dispatchMouseEvent',{'type':'mouseReleased',**grid_pixel(*end),'button':'left','buttons':0,'clickCount':1})
+
+    def touch_drag(start,end,cancel=False):
+        call('Input.dispatchTouchEvent',{'type':'touchStart','touchPoints':[{'id':1,**grid_pixel(*start)}]})
+        call('Input.dispatchTouchEvent',{'type':'touchMove','touchPoints':[{'id':1,**grid_pixel(*end)}]})
+        call('Input.dispatchTouchEvent',{'type':'touchCancel' if cancel else 'touchEnd','touchPoints':[]})
+
     call('Runtime.enable');call('Page.enable')
     call('Emulation.setDeviceMetricsOverride',{'width':1440,'height':1100,'deviceScaleFactor':1,'mobile':False})
     call('Emulation.setEmulatedMedia',{'features':[{'name':'prefers-color-scheme','value':'light'}]})
@@ -119,6 +133,24 @@ try:
     assert evaluate('JSON.stringify(S().nets)===before')
     assert evaluate("['rs-loss-chart','rs-gradient-chart','rs-predictions'].every(V)")
     assert evaluate("document.querySelectorAll('[data-colorbar]').length===4 && document.querySelectorAll('[data-color-tick]').length===12")
+    assert evaluate("!Q('rs-x')&&!Q('rs-y')&&!Q('rs-x-value')&&!Q('rs-y-value')")
+    evaluate("Q('rs-gradient-source').value='single';Q('rs-gradient-source').dispatchEvent(new Event('change'));Q('rs-input').scrollIntoView({block:'center',behavior:'instant'});window.dragBefore=JSON.stringify({nets:S().nets,history:S().history,points:S().points,order:S().order,cursor:S().batchCursor});window.markersBefore=['rs-plain','rs-res'].map(id=>Q(id).querySelector('.rs-selected-point').outerHTML)")
+    mouse_drag((.5,-.5),(-1,1.25))
+    assert evaluate("S().inputPoint.x===-1&&S().inputPoint.y===1.25&&Q('rs-selected-input').textContent.includes('1.25')")
+    assert evaluate("JSON.stringify({nets:S().nets,history:S().history,points:S().points,order:S().order,cursor:S().batchCursor})===dragBefore")
+    assert evaluate("['rs-plain','rs-res'].every((id,k)=>Q(id).querySelector('.rs-selected-point').outerHTML!==markersBefore[k])")
+    assert evaluate("T.gradientData().batch[0][0]===-1&&T.gradientData().batch[0][1]===1.25&&T.sliceData().point[0]===-1")
+    assert evaluate("['plain','res'].every((name,k)=>Math.abs(+Q('rs-'+name+'-slice').dataset.currentLoss-S().nets[k].mse([[-1,1.25,T.target(-1,1.25)]]))<1e-12)")
+    assert evaluate("['plain','res'].every((name,k)=>Q('rs-'+name+'-summary').textContent.includes(S().nets[k].forward(-1,1.25).pred.toFixed(4)))")
+    mouse_drag((-1,1.25),(3,-3))
+    assert evaluate("S().inputPoint.x===2&&S().inputPoint.y===-2&&!Q('rs-input').classList.contains('is-dragging')")
+    for key,code,modifiers in [('Home',36,0),('ArrowRight',39,0),('ArrowUp',38,8)]:
+        call('Input.dispatchKeyEvent',{'type':'keyDown','key':key,'code':key,'windowsVirtualKeyCode':code,'modifiers':modifiers})
+        call('Input.dispatchKeyEvent',{'type':'keyUp','key':key,'code':key,'windowsVirtualKeyCode':code,'modifiers':0})
+    assert evaluate("S().inputPoint.x===.05&&S().inputPoint.y===.01")
+    mouse_drag((.5,-.5),(.5,-.5))  # Clicking a new grid location also places the point.
+    assert evaluate("S().inputPoint.x===.5&&S().inputPoint.y===-.5&&JSON.stringify(S().nets)===before")
+    report['inputInteraction']={'mouseDrag':True,'clampedOutsideGrid':True,'keyboard':True,'linkedViews':True,'modelAndDatasetUnchanged':True}
     evaluate("Q('rs-gradient-source').value='single';Q('rs-gradient-source').dispatchEvent(new Event('change'));Q('rs-preview-offset').value=.2;Q('rs-preview-offset').dispatchEvent(new Event('input'));")
     assert evaluate('JSON.stringify(S().nets)===before')
     assert evaluate("Math.abs(+Q('rs-plain-slice').dataset.previewWeight-(+Q('rs-plain-slice').dataset.currentWeight)-.2)<1e-10")
@@ -177,6 +209,15 @@ try:
             assert evaluate("Q('workspace-toggle').getAttribute('aria-expanded')==='false'&&document.activeElement===Q('workspace-toggle')&&JSON.stringify(S().nets)===drawerBefore")
         report['layouts'].append({'width':width,'height':height,'overflow':overflow,'controlsVisibleAtAllScrollPositions':True})
     screenshot('mobile-controls-scrolled.png',False)
+    evaluate("Q('rs-input').scrollIntoView({block:'center',behavior:'instant'});window.touchBefore=JSON.stringify(S().nets)")
+    touch_drag((.5,-.5),(-.75,-.5))
+    assert evaluate("S().inputPoint.x===-.75&&S().inputPoint.y===-.5")
+    touch_drag((-.75,-.5),(.3,.4),cancel=True)
+    wait_until("!Q('rs-input').classList.contains('is-dragging')")
+    touch_drag((.3,.4),(.5,-.5))
+    assert evaluate("S().inputPoint.x===.5&&S().inputPoint.y===-.5&&JSON.stringify(S().nets)===touchBefore")
+    report['inputInteraction']['touchDragAndCancellation']=True
+    screenshot('mobile-input-drag.png',False)
     screenshot('mobile-panels.png')
     call('Emulation.setDeviceMetricsOverride',{'width':1440,'height':1100,'deviceScaleFactor':1,'mobile':False})
     call('Emulation.setEmulatedMedia',{'features':[{'name':'prefers-color-scheme','value':'dark'}]})

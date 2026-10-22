@@ -5,6 +5,7 @@ const root=document.getElementById('rs-lab'),$=s=>root.querySelector(s),NS='http
 
 const make=(tag,attrs,text)=>{const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e};
 let nets,points,step=0,running=false,surfaceCache=null,featureCache=null,mseCache=null;
+const inputPoint={x:.5,y:-.5};
 let widths=Array(37).fill(10),order=[],batchCursor=0,samplesSeen=0,batchRng,trainTimer=null;
 const pcaPrevious=new Map(),correctionPcaPrevious=new Map(),batchSize=128;
 const camera={yaw:-.72,pitch:.58},surfaceSize=25;
@@ -61,7 +62,7 @@ function featureData(layer){
 function plot(svg,values,selected,extent,color,labels,reference=null){svg.setAttribute('viewBox','0 0 250 235');svg.replaceChildren();const X=v=>125+v/extent*90,Y=v=>111-v/extent*90,precision=extent<.2?3:extent<2?2:1;for(let k=-2;k<=2;k++){let v=k*extent/2;const tick=precision>1?String(Number(v.toFixed(precision))):v.toFixed(1);svg.append(make('path',{d:'M35,'+Y(v)+'H215 M'+X(v)+',21V201',stroke:'var(--border)','stroke-width':1,fill:'none'}));svg.append(make('text',{x:X(v),y:219,'text-anchor':'middle',class:'text-small'},tick));if(k!==0)svg.append(make('text',{x:precision>1?34:30,y:Y(v)+4,'text-anchor':'end',class:'text-small'},tick))}
 for(let j=0;j<gridSide;j++){let d='';for(let i=0;i<gridSide;i++){const p=values[j*gridSide+i];d+=(i?'L':'M')+X(p[0])+','+Y(p[1])}svg.append(make('path',{d,stroke:color,opacity:.35,fill:'none','stroke-width':1}))}
 for(let i=0;i<gridSide;i++){let d='';for(let j=0;j<gridSide;j++){const p=values[j*gridSide+i];d+=(j?'L':'M')+X(p[0])+','+Y(p[1])}svg.append(make('path',{d,stroke:color,opacity:.35,fill:'none','stroke-width':1}))}
-values.forEach(p=>svg.append(make('circle',{cx:X(p[0]),cy:Y(p[1]),r:1.1,fill:color})));if(reference){const x=X(reference[0]),y=Y(reference[1]);svg.append(make('path',{d:'M'+(x-4)+','+y+'h8 M'+x+','+(y-4)+'v8',stroke:'var(--foreground)','stroke-width':1.5,fill:'none','data-reference':'zero correction'}))}svg.append(make('circle',{cx:X(selected[0]),cy:Y(selected[1]),r:5,fill:color,stroke:'var(--foreground)','stroke-width':1}));svg.append(make('text',{x:125,y:234,'text-anchor':'middle',class:'text-small'},labels[0]+' →'));svg.append(make('text',{x:35,y:13,class:'text-small'},labels[1]+' ↑'))}
+values.forEach(p=>svg.append(make('circle',{cx:X(p[0]),cy:Y(p[1]),r:1.1,fill:color})));if(reference){const x=X(reference[0]),y=Y(reference[1]);svg.append(make('path',{d:'M'+(x-4)+','+y+'h8 M'+x+','+(y-4)+'v8',stroke:'var(--foreground)','stroke-width':1.5,fill:'none','data-reference':'zero correction'}))}if(svg.id==='rs-input')svg.append(make('circle',{cx:X(selected[0]),cy:Y(selected[1]),r:20,fill:'transparent','data-input-handle':'true'}));svg.append(make('circle',{cx:X(selected[0]),cy:Y(selected[1]),r:svg.id==='rs-input'?6:5,fill:color,stroke:'var(--foreground)','stroke-width':1,class:'rs-selected-point'}));svg.append(make('text',{x:125,y:234,'text-anchor':'middle',class:'text-small'},labels[0]+' →'));svg.append(make('text',{x:35,y:13,class:'text-small'},labels[1]+' ↑'))}
 function drawCorrection(view,selected,layer){
  const svg=$('#rs-correction'),caption=$('#rs-correction-caption'),detail=$('#rs-correction-selected');
  svg.dataset.update=step;svg.dataset.block=layer;
@@ -137,14 +138,14 @@ function paintSurface(canvas,values,data,selected,samples){
  canvas.dataset.update=String(step);canvas.dataset.zMin=data.low;canvas.dataset.zMax=data.high;canvas.dataset.selectedOutput=selected[2];
 }
 function drawSurfaces(){
- if(!nets)return;const data=surfaceData(),x=Number($('#rs-x').value),y=Number($('#rs-y').value),selected=[target(x,y),...nets.map(n=>n.forward(x,y).pred)];
+ if(!nets)return;const data=surfaceData(),{x,y}=inputPoint,selected=[target(x,y),...nets.map(n=>n.forward(x,y).pred)];
  ['target','plain','res'].forEach((name,i)=>paintSurface($('#rs-'+name+'-surface'),data.values[i],data,[x,y,selected[i]],i===0));
  $('#rs-target-summary').textContent=points.length.toLocaleString()+' training points · selected target '+selected[0].toFixed(4);
  $('#rs-plain-summary').textContent='Selected prediction '+selected[1].toFixed(4)+' · error '+(selected[1]-selected[0]).toFixed(4);
  $('#rs-res-summary').textContent='Selected prediction '+selected[2].toFixed(4)+' · error '+(selected[2]-selected[0]).toFixed(4);
  $('#rs-surface-range').textContent='Shared 3D axes: x₁ and x₂ from −2 to 2; output z from '+data.low.toFixed(1)+' to '+data.high.toFixed(1)+'. The dots on the target are the actual training samples. Prediction surfaces always show the final output; the block slider changes only the hidden-feature plots and highlighted table row.';
 }
-function draw(){const x=Number($('#rs-x').value),y=Number($('#rs-y').value),layer=Number($('#rs-layer').value),depth=nets[0].depth;$('#rs-x-value').value=x.toFixed(2);$('#rs-y-value').value=y.toFixed(2);$('#rs-layer-number').value=layer;$('#rs-layer-value').textContent=layer===0?'stem':'block '+layer;
+function draw(){const {x,y}=inputPoint,layer=Number($('#rs-layer').value),depth=nets[0].depth;$('#rs-selected-input').textContent='x₁ = '+x.toFixed(2)+' · x₂ = '+y.toFixed(2);$('#rs-layer-number').value=layer;$('#rs-layer-value').textContent=layer===0?'stem':'block '+layer;
 for(const el of root.querySelectorAll('input[type=range]'))el.style.setProperty('--rs-fill',100*(Number(el.value)-Number(el.min))/(Number(el.max)-Number(el.min))+'%');
 const selected=nets.map(n=>n.forward(x,y)),view=featureData(layer),clouds=view.clouds,markers=selected.map(c=>view.project(c.hs[layer+1])),extent=Math.max(2,Math.ceil(Math.max(...clouds.flat(2).map(Math.abs),...markers.flat().map(Math.abs))*2)/2),labels=view.pca?['PC1','PC2']:['hidden coordinate 1',view.dim===1?'zero (width 1)':'hidden coordinate 2'];
 plot($('#rs-input'),grid,[x,y],2,'var(--foreground)',['input x₁','input x₂']);plot($('#rs-plain'),clouds[0],markers[0],extent,'var(--viz-series-1)',labels);plot($('#rs-res'),clouds[1],markers[1],extent,'var(--viz-series-2)',labels);
@@ -164,8 +165,49 @@ $('#rs-width-all').oninput=()=>setAllWidths($('#rs-width-all').value);$('#rs-wid
 $('#rs-apply-width').onclick=()=>setAllWidths($('#rs-width-all-number').value);
 function setSamples(value){const n=Math.max(128,Math.min(4096,Math.round(Number(value)/128)*128||128));$('#rs-samples').value=n;$('#rs-samples-number').value=n;init()}
 $('#rs-samples').oninput=()=>setSamples($('#rs-samples').value);$('#rs-samples-number').onchange=()=>setSamples($('#rs-samples-number').value);
-$('#rs-init').onclick=init;$('#rs-depth').onchange=()=>{const count=Number($('#rs-depth').value)+1;while(widths.length<count)widths.push(Number($('#rs-width-all').value));widths=widths.slice(0,count);buildWidthControls();init()};$('#rs-seed').onchange=init;for(const id of ['rs-x','rs-y','rs-layer'])$('#'+id).oninput=draw;
-for(const [number,slider]of [['rs-x-value','rs-x'],['rs-y-value','rs-y'],['rs-layer-number','rs-layer']])$('#'+number).onchange=()=>{const input=$('#'+number),range=$('#'+slider),v=Number(input.value);if(input.value!==''&&Number.isFinite(v))range.value=Math.max(Number(range.min),Math.min(Number(range.max),v));draw()};
+$('#rs-init').onclick=init;$('#rs-depth').onchange=()=>{const count=Number($('#rs-depth').value)+1;while(widths.length<count)widths.push(Number($('#rs-width-all').value));widths=widths.slice(0,count);buildWidthControls();init()};$('#rs-seed').onchange=init;$('#rs-layer').oninput=draw;
+$('#rs-layer-number').onchange=()=>{const input=$('#rs-layer-number'),range=$('#rs-layer'),v=Number(input.value);if(input.value!==''&&Number.isFinite(v))range.value=Math.max(Number(range.min),Math.min(Number(range.max),v));draw()};
+const inputGrid=$('#rs-input');let inputDrag=null,inputFrame=null;
+function setInputPoint(x,y,defer=false){
+ if(!Number.isFinite(x)||!Number.isFinite(y))return;
+ const clamp=v=>Math.round(Math.max(-2,Math.min(2,v))*100)/100;
+ inputPoint.x=clamp(x);inputPoint.y=clamp(y);
+ if(defer){if(inputFrame===null)inputFrame=requestAnimationFrame(()=>{inputFrame=null;draw()})}
+ else{if(inputFrame!==null)cancelAnimationFrame(inputFrame);inputFrame=null;draw()}
+}
+function gridPoint(event){
+ const matrix=inputGrid.getScreenCTM();if(!matrix)return null;
+ // Convert through the SVG transform, including responsive scaling and scrolling.
+ const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());
+ return{x:(point.x-125)/45,y:(111-point.y)/45};
+}
+function dragInput(event,defer){
+ const point=gridPoint(event);if(point)setInputPoint(point.x+inputDrag.dx,point.y+inputDrag.dy,defer);
+}
+inputGrid.onpointerdown=event=>{
+ if(!event.isPrimary||event.button!==0||inputDrag)return;
+ const point=gridPoint(event);if(!point)return;
+ const handle=event.target.closest('[data-input-handle],.rs-selected-point');
+ if(!handle&&(Math.abs(point.x)>2||Math.abs(point.y)>2))return;
+ event.preventDefault();inputGrid.focus({preventScroll:true});
+ inputDrag={id:event.pointerId,dx:handle?inputPoint.x-point.x:0,dy:handle?inputPoint.y-point.y:0};
+ inputGrid.setPointerCapture(event.pointerId);inputGrid.classList.add('is-dragging');dragInput(event,false);
+};
+inputGrid.onpointermove=event=>{if(inputDrag?.id===event.pointerId){event.preventDefault();dragInput(event,true)}};
+function endInputDrag(event,commit){
+ if(inputDrag?.id!==event.pointerId)return;
+ if(commit)dragInput(event,false);
+ else if(inputFrame!==null){cancelAnimationFrame(inputFrame);inputFrame=null;draw()}
+ inputDrag=null;inputGrid.classList.remove('is-dragging');
+ if(inputGrid.hasPointerCapture(event.pointerId))inputGrid.releasePointerCapture(event.pointerId);
+}
+inputGrid.onpointerup=event=>endInputDrag(event,true);
+inputGrid.onpointercancel=inputGrid.onlostpointercapture=event=>endInputDrag(event,false);
+inputGrid.onkeydown=event=>{
+ const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]},direction=directions[event.key];
+ if(event.key==='Home'){event.preventDefault();setInputPoint(0,0)}
+ else if(direction){event.preventDefault();const distance=event.shiftKey ? 0.01 : 0.05;setInputPoint(inputPoint.x+direction[0]*distance,inputPoint.y+direction[1]*distance)}
+};
 $('#rs-view-left').onclick=()=>{camera.yaw-=Math.PI/12;drawSurfaces()};$('#rs-view-right').onclick=()=>{camera.yaw+=Math.PI/12;drawSurfaces()};
 for(const canvas of root.querySelectorAll('.rs-surface')){
  let drag=null;canvas.onpointerdown=e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,yaw:camera.yaw,pitch:camera.pitch};canvas.setPointerCapture(e.pointerId)};
@@ -226,7 +268,7 @@ function syncTrainingDock(){
  if(document.documentElement.style.getPropertyValue('--training-dock-height')!==height)document.documentElement.style.setProperty('--training-dock-height',height);
 }
 new ResizeObserver(syncTrainingDock).observe($('.training-toolbar'));syncTrainingDock();
-root.__test={runUpdates,applyVisibility,loadPreset,Net,target,fitPCA,projectPCA,update,draw,surfaceData,featureData,gradientData,sliceData,lineChart,trainSelectedExample,getState:()=>({nets,step,points,camera,widths:widths.slice(),samplesSeen,batchCursor,order:order.slice(),running,history:inspection.history,lastBatch:inspection.lastBatch,singleSteps:inspection.singleSteps})};buildWidthControls();init();
+root.__test={runUpdates,applyVisibility,loadPreset,Net,target,fitPCA,projectPCA,update,draw,surfaceData,featureData,gradientData,sliceData,lineChart,trainSelectedExample,getState:()=>({nets,step,points,camera,inputPoint:{...inputPoint},widths:widths.slice(),samplesSeen,batchCursor,order:order.slice(),running,history:inspection.history,lastBatch:inspection.lastBatch,singleSteps:inspection.singleSteps})};buildWidthControls();init();
 applyVisibility();
 new ResizeObserver(()=>{drawSurfaces();drawInspector()}).observe($('#rs-target-surface'));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>drawSurfaces());

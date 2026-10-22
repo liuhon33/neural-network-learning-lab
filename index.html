@@ -83,6 +83,12 @@
 @media(max-width:420px){main,.site-header,.site-footer{padding:14px}#rs-lab .training-toolbar{padding:12px}#rs-lab .training-toolbar>.btn{flex:1 1 110px}#rs-lab .workspace-options{padding:12px}#rs-lab .rs-setup{flex-direction:column;align-items:stretch}#rs-lab .rs-heatmaps{grid-template-columns:1fr}.site-header nav{gap:12px 18px}.brand{width:100%}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 /* Reserve space for the fixed controls so plots and anchor targets stay clear. */
+#rs-lab #rs-input{touch-action:none;user-select:none;cursor:crosshair}
+#rs-lab #rs-input [data-input-handle],#rs-lab #rs-input .rs-selected-point{cursor:grab}
+#rs-lab #rs-input.is-dragging,#rs-lab #rs-input.is-dragging *{cursor:grabbing}
+#rs-lab #rs-input:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:4px}
+#rs-lab .rs-point-readout{display:block;font:500 16px/1.5 var(--font-mono);font-variant-numeric:tabular-nums;margin:6px 0}
+#rs-lab .rs-point-help{font-size:14px;margin:6px 0 12px}
 html:has(.lab-page){scroll-padding-top:calc(var(--training-dock-height,210px) + 32px)}
 .lab-page{--workspace-rail:280px;padding-left:var(--workspace-rail);padding-top:calc(var(--training-dock-height,210px) + 24px)}
 #rs-lab .workspace-options{position:fixed;left:16px;top:16px;width:calc(var(--workspace-rail) - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;z-index:25;padding:20px 16px;margin:0}
@@ -149,16 +155,12 @@ html:has(.lab-page){scroll-padding-top:calc(var(--training-dock-height,210px) + 
 <section class="rs-actions training-toolbar" aria-labelledby="training-heading"><div class="training-heading"><h2 id="training-heading">Training updates</h2><button class="btn workspace-toggle" id="workspace-toggle" type="button" aria-expanded="false" aria-controls="workspace-options">Workspace</button></div><button class="btn btn-primary" id="rs-step" type="button" aria-label="Perform one training update"><span class="button-long">One update</span><span class="button-short" aria-hidden="true">+1</span></button><button class="btn" id="rs-run" type="button" aria-label="Train 100 additional updates"><span class="button-long">Train 100 updates</span><span class="button-short" aria-hidden="true">+100</span></button><button class="btn" id="rs-run-500" type="button" aria-label="Train 500 additional updates"><span class="button-long">Train 500 updates</span><span class="button-short" aria-hidden="true">+500</span></button><button class="btn" id="rs-run-1000" type="button" aria-label="Train 1,000 additional updates"><span class="button-long">Train 1,000 updates</span><span class="button-short" aria-hidden="true">+1,000</span></button><button class="btn" id="rs-pause" type="button" disabled>Pause</button>
 <button class="btn" id="rs-init" type="button" aria-label="Reset both networks' weights and training history"><span class="button-long">Reset weights</span><span class="button-short" aria-hidden="true">Reset</span></button><div class="run-status"><progress id="rs-progress" max="1" value="0" aria-label="Requested training updates completed"></progress><span id="rs-run-status" role="status">Ready. Each update uses a batch of up to 128 examples.</span></div><span aria-live="polite" id="rs-info"></span></section>
 <section class="lab-panel" id="rs-input-panel"><h2>Follow one input</h2>
-<div class="rs-inputs">
-<div class="rs-control"><div class="rs-control-heading"><label for="rs-x">Input x₁</label><input aria-label="Input x1 numeric value" class="form-control rs-number" id="rs-x-value" max="2" min="-2" step="0.05" type="number" value="0.50"/></div><input aria-label="Input x1 slider" class="form-range" id="rs-x" max="2" min="-2" step="0.05" type="range" value="0.5"/></div>
-<div class="rs-control"><div class="rs-control-heading"><label for="rs-y">Input x₂</label><input aria-label="Input x2 numeric value" class="form-control rs-number" id="rs-y-value" max="2" min="-2" step="0.05" type="number" value="-0.50"/></div><input aria-label="Input x2 slider" class="form-range" id="rs-y" max="2" min="-2" step="0.05" type="range" value="-0.5"/></div>
-</div>
 <div class="rs-control rs-layer-control"><div class="rs-control-heading"><label for="rs-layer">Feature cloud after <span id="rs-layer-value"></span></label><input aria-label="Feature block number; zero is the stem" class="form-control rs-number" id="rs-layer-number" max="36" min="0" type="number" value="36"/></div><input class="form-range" id="rs-layer" max="36" min="0" type="range" value="36"/></div>
 <div class="rs-note" id="rs-range"></div>
 </section>
 <section class="lab-panel" id="rs-views-panel"><h2>Feature maps through the network</h2>
 <div class="rs-plots rs-feature-grid">
-<section><h3>Input coordinates</h3><svg aria-label="Grid of input points; selected example highlighted" class="rs-feature-plot" id="rs-input" role="img"></svg><p class="rs-feature-caption" id="rs-input-caption"></p></section>
+<section><h3>Input coordinates · drag the point</h3><svg aria-label="Choose an input point" aria-roledescription="Two-dimensional input selector" aria-describedby="rs-input-help rs-selected-input" class="rs-feature-plot" id="rs-input" role="group" tabindex="0"></svg><output class="rs-point-readout" id="rs-selected-input">x₁ = 0.50 · x₂ = −0.50</output><p class="rs-note rs-point-help" id="rs-input-help">Drag the point or click the grid. Arrow keys move it; Shift makes smaller steps. Home centers it.</p><p class="rs-feature-caption" id="rs-input-caption"></p></section>
 <section><h3>Plain network · hidden features</h3><svg aria-label="Hidden features of the input grid" class="rs-feature-plot" id="rs-plain" role="img"></svg><p class="rs-feature-caption" id="rs-plain-caption"></p></section>
 <section><h3>Residual network · hidden features</h3><svg aria-label="Residual hidden features of the input grid" class="rs-feature-plot" id="rs-res" role="img"></svg><p class="rs-feature-caption" id="rs-res-caption"></p></section>
 <section hidden="" id="rs-correction-panel"><h3 id="rs-correction-title">Selected block · added correction αF(h)</h3><svg aria-describedby="rs-correction-caption rs-correction-selected" aria-labelledby="rs-correction-title" class="rs-feature-plot" id="rs-correction" role="img"></svg><p class="rs-feature-caption" id="rs-correction-caption"></p><p class="rs-correction-details" id="rs-correction-selected"></p></section>
@@ -205,7 +207,7 @@ html:has(.lab-page){scroll-padding-top:calc(var(--training-dock-height,210px) + 
 </div>
 <p class="rs-note">Filled dot: current parameter · open diamond: preview · dashed tangent: current single-example gradient. Only the chosen parameter varies along each curve. Previewing leaves both models unchanged.</p>
 <div class="rs-actions"><button class="btn btn-primary" id="rs-example-step" type="button">Train both networks once on this example</button></div>
-<p class="rs-note">Uses the input x₁ and x₂ controls above and the target function’s label. Updates all trainable parameters with Adam 0.003 and its existing optimizer state, then redraws the curves. The example is not appended to the training set.</p>
+<p class="rs-note">Uses the point selected on the input grid and the target function’s label. Updates all trainable parameters with Adam 0.003 and its existing optimizer state, then redraws the curves. The example is not appended to the training set.</p>
 <p aria-live="polite" class="rs-note" id="rs-example-result"></p>
 </section>
 </section>
@@ -339,6 +341,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports={Net,rng,target,tr
 
 const make=(tag,attrs,text)=>{const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e};
 let nets,points,step=0,running=false,surfaceCache=null,featureCache=null,mseCache=null;
+const inputPoint={x:.5,y:-.5};
 let widths=Array(37).fill(10),order=[],batchCursor=0,samplesSeen=0,batchRng,trainTimer=null;
 const pcaPrevious=new Map(),correctionPcaPrevious=new Map(),batchSize=128;
 const camera={yaw:-.72,pitch:.58},surfaceSize=25;
@@ -395,7 +398,7 @@ function featureData(layer){
 function plot(svg,values,selected,extent,color,labels,reference=null){svg.setAttribute('viewBox','0 0 250 235');svg.replaceChildren();const X=v=>125+v/extent*90,Y=v=>111-v/extent*90,precision=extent<.2?3:extent<2?2:1;for(let k=-2;k<=2;k++){let v=k*extent/2;const tick=precision>1?String(Number(v.toFixed(precision))):v.toFixed(1);svg.append(make('path',{d:'M35,'+Y(v)+'H215 M'+X(v)+',21V201',stroke:'var(--border)','stroke-width':1,fill:'none'}));svg.append(make('text',{x:X(v),y:219,'text-anchor':'middle',class:'text-small'},tick));if(k!==0)svg.append(make('text',{x:precision>1?34:30,y:Y(v)+4,'text-anchor':'end',class:'text-small'},tick))}
 for(let j=0;j<gridSide;j++){let d='';for(let i=0;i<gridSide;i++){const p=values[j*gridSide+i];d+=(i?'L':'M')+X(p[0])+','+Y(p[1])}svg.append(make('path',{d,stroke:color,opacity:.35,fill:'none','stroke-width':1}))}
 for(let i=0;i<gridSide;i++){let d='';for(let j=0;j<gridSide;j++){const p=values[j*gridSide+i];d+=(j?'L':'M')+X(p[0])+','+Y(p[1])}svg.append(make('path',{d,stroke:color,opacity:.35,fill:'none','stroke-width':1}))}
-values.forEach(p=>svg.append(make('circle',{cx:X(p[0]),cy:Y(p[1]),r:1.1,fill:color})));if(reference){const x=X(reference[0]),y=Y(reference[1]);svg.append(make('path',{d:'M'+(x-4)+','+y+'h8 M'+x+','+(y-4)+'v8',stroke:'var(--foreground)','stroke-width':1.5,fill:'none','data-reference':'zero correction'}))}svg.append(make('circle',{cx:X(selected[0]),cy:Y(selected[1]),r:5,fill:color,stroke:'var(--foreground)','stroke-width':1}));svg.append(make('text',{x:125,y:234,'text-anchor':'middle',class:'text-small'},labels[0]+' →'));svg.append(make('text',{x:35,y:13,class:'text-small'},labels[1]+' ↑'))}
+values.forEach(p=>svg.append(make('circle',{cx:X(p[0]),cy:Y(p[1]),r:1.1,fill:color})));if(reference){const x=X(reference[0]),y=Y(reference[1]);svg.append(make('path',{d:'M'+(x-4)+','+y+'h8 M'+x+','+(y-4)+'v8',stroke:'var(--foreground)','stroke-width':1.5,fill:'none','data-reference':'zero correction'}))}if(svg.id==='rs-input')svg.append(make('circle',{cx:X(selected[0]),cy:Y(selected[1]),r:20,fill:'transparent','data-input-handle':'true'}));svg.append(make('circle',{cx:X(selected[0]),cy:Y(selected[1]),r:svg.id==='rs-input'?6:5,fill:color,stroke:'var(--foreground)','stroke-width':1,class:'rs-selected-point'}));svg.append(make('text',{x:125,y:234,'text-anchor':'middle',class:'text-small'},labels[0]+' →'));svg.append(make('text',{x:35,y:13,class:'text-small'},labels[1]+' ↑'))}
 function drawCorrection(view,selected,layer){
  const svg=$('#rs-correction'),caption=$('#rs-correction-caption'),detail=$('#rs-correction-selected');
  svg.dataset.update=step;svg.dataset.block=layer;
@@ -471,14 +474,14 @@ function paintSurface(canvas,values,data,selected,samples){
  canvas.dataset.update=String(step);canvas.dataset.zMin=data.low;canvas.dataset.zMax=data.high;canvas.dataset.selectedOutput=selected[2];
 }
 function drawSurfaces(){
- if(!nets)return;const data=surfaceData(),x=Number($('#rs-x').value),y=Number($('#rs-y').value),selected=[target(x,y),...nets.map(n=>n.forward(x,y).pred)];
+ if(!nets)return;const data=surfaceData(),{x,y}=inputPoint,selected=[target(x,y),...nets.map(n=>n.forward(x,y).pred)];
  ['target','plain','res'].forEach((name,i)=>paintSurface($('#rs-'+name+'-surface'),data.values[i],data,[x,y,selected[i]],i===0));
  $('#rs-target-summary').textContent=points.length.toLocaleString()+' training points · selected target '+selected[0].toFixed(4);
  $('#rs-plain-summary').textContent='Selected prediction '+selected[1].toFixed(4)+' · error '+(selected[1]-selected[0]).toFixed(4);
  $('#rs-res-summary').textContent='Selected prediction '+selected[2].toFixed(4)+' · error '+(selected[2]-selected[0]).toFixed(4);
  $('#rs-surface-range').textContent='Shared 3D axes: x₁ and x₂ from −2 to 2; output z from '+data.low.toFixed(1)+' to '+data.high.toFixed(1)+'. The dots on the target are the actual training samples. Prediction surfaces always show the final output; the block slider changes only the hidden-feature plots and highlighted table row.';
 }
-function draw(){const x=Number($('#rs-x').value),y=Number($('#rs-y').value),layer=Number($('#rs-layer').value),depth=nets[0].depth;$('#rs-x-value').value=x.toFixed(2);$('#rs-y-value').value=y.toFixed(2);$('#rs-layer-number').value=layer;$('#rs-layer-value').textContent=layer===0?'stem':'block '+layer;
+function draw(){const {x,y}=inputPoint,layer=Number($('#rs-layer').value),depth=nets[0].depth;$('#rs-selected-input').textContent='x₁ = '+x.toFixed(2)+' · x₂ = '+y.toFixed(2);$('#rs-layer-number').value=layer;$('#rs-layer-value').textContent=layer===0?'stem':'block '+layer;
 for(const el of root.querySelectorAll('input[type=range]'))el.style.setProperty('--rs-fill',100*(Number(el.value)-Number(el.min))/(Number(el.max)-Number(el.min))+'%');
 const selected=nets.map(n=>n.forward(x,y)),view=featureData(layer),clouds=view.clouds,markers=selected.map(c=>view.project(c.hs[layer+1])),extent=Math.max(2,Math.ceil(Math.max(...clouds.flat(2).map(Math.abs),...markers.flat().map(Math.abs))*2)/2),labels=view.pca?['PC1','PC2']:['hidden coordinate 1',view.dim===1?'zero (width 1)':'hidden coordinate 2'];
 plot($('#rs-input'),grid,[x,y],2,'var(--foreground)',['input x₁','input x₂']);plot($('#rs-plain'),clouds[0],markers[0],extent,'var(--viz-series-1)',labels);plot($('#rs-res'),clouds[1],markers[1],extent,'var(--viz-series-2)',labels);
@@ -498,7 +501,7 @@ function update(){if(batchCursor>=order.length){shuffle();batchCursor=0}const ba
 const inspection={history:[],lastBatch:null,lastKind:null,singleSteps:0,gradCache:null,sliceCache:null};
 const modelNames=['Plain','Residual'],modelColors=['var(--viz-series-1)','var(--viz-series-2)'];
 const shortNumber=v=>!Number.isFinite(v)?'not finite':v===0?'0':Math.abs(v)<.001||Math.abs(v)>=1e4?v.toExponential(2):Number(v.toPrecision(5)).toString();
-function selectedExample(){const x=Number($('#rs-x').value),y=Number($('#rs-y').value);return[x,y,target(x,y)]}
+function selectedExample(){const {x,y}=inputPoint;return[x,y,target(x,y)]}
 function layerName(l){return l===0?'stem':l===nets[0].depth+1?'head':'block '+l}
 function inspectorReset(){
  inspection.history=[];inspection.lastBatch=null;inspection.lastKind=null;inspection.singleSteps=0;inspection.gradCache=inspection.sliceCache=null;
@@ -675,8 +678,49 @@ $('#rs-width-all').oninput=()=>setAllWidths($('#rs-width-all').value);$('#rs-wid
 $('#rs-apply-width').onclick=()=>setAllWidths($('#rs-width-all-number').value);
 function setSamples(value){const n=Math.max(128,Math.min(4096,Math.round(Number(value)/128)*128||128));$('#rs-samples').value=n;$('#rs-samples-number').value=n;init()}
 $('#rs-samples').oninput=()=>setSamples($('#rs-samples').value);$('#rs-samples-number').onchange=()=>setSamples($('#rs-samples-number').value);
-$('#rs-init').onclick=init;$('#rs-depth').onchange=()=>{const count=Number($('#rs-depth').value)+1;while(widths.length<count)widths.push(Number($('#rs-width-all').value));widths=widths.slice(0,count);buildWidthControls();init()};$('#rs-seed').onchange=init;for(const id of ['rs-x','rs-y','rs-layer'])$('#'+id).oninput=draw;
-for(const [number,slider]of [['rs-x-value','rs-x'],['rs-y-value','rs-y'],['rs-layer-number','rs-layer']])$('#'+number).onchange=()=>{const input=$('#'+number),range=$('#'+slider),v=Number(input.value);if(input.value!==''&&Number.isFinite(v))range.value=Math.max(Number(range.min),Math.min(Number(range.max),v));draw()};
+$('#rs-init').onclick=init;$('#rs-depth').onchange=()=>{const count=Number($('#rs-depth').value)+1;while(widths.length<count)widths.push(Number($('#rs-width-all').value));widths=widths.slice(0,count);buildWidthControls();init()};$('#rs-seed').onchange=init;$('#rs-layer').oninput=draw;
+$('#rs-layer-number').onchange=()=>{const input=$('#rs-layer-number'),range=$('#rs-layer'),v=Number(input.value);if(input.value!==''&&Number.isFinite(v))range.value=Math.max(Number(range.min),Math.min(Number(range.max),v));draw()};
+const inputGrid=$('#rs-input');let inputDrag=null,inputFrame=null;
+function setInputPoint(x,y,defer=false){
+ if(!Number.isFinite(x)||!Number.isFinite(y))return;
+ const clamp=v=>Math.round(Math.max(-2,Math.min(2,v))*100)/100;
+ inputPoint.x=clamp(x);inputPoint.y=clamp(y);
+ if(defer){if(inputFrame===null)inputFrame=requestAnimationFrame(()=>{inputFrame=null;draw()})}
+ else{if(inputFrame!==null)cancelAnimationFrame(inputFrame);inputFrame=null;draw()}
+}
+function gridPoint(event){
+ const matrix=inputGrid.getScreenCTM();if(!matrix)return null;
+ // Convert through the SVG transform, including responsive scaling and scrolling.
+ const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());
+ return{x:(point.x-125)/45,y:(111-point.y)/45};
+}
+function dragInput(event,defer){
+ const point=gridPoint(event);if(point)setInputPoint(point.x+inputDrag.dx,point.y+inputDrag.dy,defer);
+}
+inputGrid.onpointerdown=event=>{
+ if(!event.isPrimary||event.button!==0||inputDrag)return;
+ const point=gridPoint(event);if(!point)return;
+ const handle=event.target.closest('[data-input-handle],.rs-selected-point');
+ if(!handle&&(Math.abs(point.x)>2||Math.abs(point.y)>2))return;
+ event.preventDefault();inputGrid.focus({preventScroll:true});
+ inputDrag={id:event.pointerId,dx:handle?inputPoint.x-point.x:0,dy:handle?inputPoint.y-point.y:0};
+ inputGrid.setPointerCapture(event.pointerId);inputGrid.classList.add('is-dragging');dragInput(event,false);
+};
+inputGrid.onpointermove=event=>{if(inputDrag?.id===event.pointerId){event.preventDefault();dragInput(event,true)}};
+function endInputDrag(event,commit){
+ if(inputDrag?.id!==event.pointerId)return;
+ if(commit)dragInput(event,false);
+ else if(inputFrame!==null){cancelAnimationFrame(inputFrame);inputFrame=null;draw()}
+ inputDrag=null;inputGrid.classList.remove('is-dragging');
+ if(inputGrid.hasPointerCapture(event.pointerId))inputGrid.releasePointerCapture(event.pointerId);
+}
+inputGrid.onpointerup=event=>endInputDrag(event,true);
+inputGrid.onpointercancel=inputGrid.onlostpointercapture=event=>endInputDrag(event,false);
+inputGrid.onkeydown=event=>{
+ const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]},direction=directions[event.key];
+ if(event.key==='Home'){event.preventDefault();setInputPoint(0,0)}
+ else if(direction){event.preventDefault();const distance=event.shiftKey ? 0.01 : 0.05;setInputPoint(inputPoint.x+direction[0]*distance,inputPoint.y+direction[1]*distance)}
+};
 $('#rs-view-left').onclick=()=>{camera.yaw-=Math.PI/12;drawSurfaces()};$('#rs-view-right').onclick=()=>{camera.yaw+=Math.PI/12;drawSurfaces()};
 for(const canvas of root.querySelectorAll('.rs-surface')){
  let drag=null;canvas.onpointerdown=e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,yaw:camera.yaw,pitch:camera.pitch};canvas.setPointerCapture(e.pointerId)};
@@ -737,7 +781,7 @@ function syncTrainingDock(){
  if(document.documentElement.style.getPropertyValue('--training-dock-height')!==height)document.documentElement.style.setProperty('--training-dock-height',height);
 }
 new ResizeObserver(syncTrainingDock).observe($('.training-toolbar'));syncTrainingDock();
-root.__test={runUpdates,applyVisibility,loadPreset,Net,target,fitPCA,projectPCA,update,draw,surfaceData,featureData,gradientData,sliceData,lineChart,trainSelectedExample,getState:()=>({nets,step,points,camera,widths:widths.slice(),samplesSeen,batchCursor,order:order.slice(),running,history:inspection.history,lastBatch:inspection.lastBatch,singleSteps:inspection.singleSteps})};buildWidthControls();init();
+root.__test={runUpdates,applyVisibility,loadPreset,Net,target,fitPCA,projectPCA,update,draw,surfaceData,featureData,gradientData,sliceData,lineChart,trainSelectedExample,getState:()=>({nets,step,points,camera,inputPoint:{...inputPoint},widths:widths.slice(),samplesSeen,batchCursor,order:order.slice(),running,history:inspection.history,lastBatch:inspection.lastBatch,singleSteps:inspection.singleSteps})};buildWidthControls();init();
 applyVisibility();
 new ResizeObserver(()=>{drawSurfaces();drawInspector()}).observe($('#rs-target-surface'));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>drawSurfaces());

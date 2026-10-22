@@ -62,7 +62,7 @@ Each update records full-training-set MSE and fixed-grid MSE. The latter uses 62
 
 | View | Implementation and interpretation |
 | --- | --- |
-| Hidden-feature clouds | SVG; 289 fixed probe inputs. Grid edges preserve input adjacency. The points are activations, not parameters. |
+| Hidden-feature clouds | SVG; 289 fixed probe inputs. Grid edges preserve input adjacency. Drag the selected point on the input grid, click/tap to place it, or use arrow keys. Pointer coordinates are mapped through the SVG screen transform and clamped to the input domain; selecting an input does not train the networks. The points are activations, not parameters. |
 | Live PCA | Center pooled plain/residual features, compute covariance, use a cyclic Jacobi symmetric eigensolver, project onto two leading axes. Sign alignment reduces flips but does not freeze the basis. |
 | Residual correction | Plot the actual scaled branch activation $\alpha\tanh(Wh+b)$, with its own PCA and axes. At changing widths, subtracting unprojected input from output would be incorrect. |
 | Prediction surfaces | Canvas 2D renders projected 3D wireframes, synchronized camera rotation, shared output range, actual training points, and the selected point. No WebGL dependency. |

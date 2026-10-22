@@ -4,7 +4,7 @@
 const inspection={history:[],lastBatch:null,lastKind:null,singleSteps:0,gradCache:null,sliceCache:null};
 const modelNames=['Plain','Residual'],modelColors=['var(--viz-series-1)','var(--viz-series-2)'];
 const shortNumber=v=>!Number.isFinite(v)?'not finite':v===0?'0':Math.abs(v)<.001||Math.abs(v)>=1e4?v.toExponential(2):Number(v.toPrecision(5)).toString();
-function selectedExample(){const x=Number($('#rs-x').value),y=Number($('#rs-y').value);return[x,y,target(x,y)]}
+function selectedExample(){const {x,y}=inputPoint;return[x,y,target(x,y)]}
 function layerName(l){return l===0?'stem':l===nets[0].depth+1?'head':'block '+l}
 function inspectorReset(){
  inspection.history=[];inspection.lastBatch=null;inspection.lastKind=null;inspection.singleSteps=0;inspection.gradCache=inspection.sliceCache=null;
