@@ -1,8 +1,8 @@
-# Neural Network Learning Lab
+# Neuro Network Visualizer
 
 **Watch a neural network learn, then inspect what changed.** Compare a plain dense network and a residual network on the same two-input, one-output function. Move through hidden layers, inspect individual weights and gradients, and explore the loss around a selected parameter.
 
-**[Open the interactive lab](https://liuhon33.github.io/neural-network-learning-lab/)** · **[How to use it](https://liuhon33.github.io/neural-network-learning-lab/guide.html)** · **[Technical guide](docs/architecture.md)**
+**[Open the interactive lab](https://liuhon33.github.io/neuro-network-visualizer/)** · **[How to use it](https://liuhon33.github.io/neuro-network-visualizer/guide.html)** · **[Technical guide](docs/architecture.md)**
 
 No account, Python installation, GPU, or server setup is needed to play. All training runs in your browser. The page loads no third-party scripts, sends no training data to a service, and stores no model state after a reload.
 
@@ -13,7 +13,7 @@ No account, Python installation, GPU, or server setup is needed to play. All tra
 3. Choose **Train 500 updates**. Pause to inspect a fixed model; choose another training button to continue.
 4. Enable **Weights and gradients** or **One-weight experiment** for a closer look. Display choices do not reset the networks.
 
-The [separate student guide](https://liuhon33.github.io/neural-network-learning-lab/guide.html) explains every control, what each plot measures, and experiments to try.
+The [separate student guide](https://liuhon33.github.io/neuro-network-visualizer/guide.html) explains every control, what each plot measures, and experiments to try.
 
 ## What you can see
 
@@ -31,8 +31,8 @@ This release contains the dense function-regression inspection lab. It does not 
 Download the repository and open `index.html` in a modern browser. It is self-contained and also works offline. Alternatively:
 
 ```sh
-git clone https://github.com/liuhon33/neural-network-learning-lab.git
-cd neural-network-learning-lab
+git clone https://github.com/liuhon33/neuro-network-visualizer.git
+cd neuro-network-visualizer
 python -m http.server 8000
 ```
 
