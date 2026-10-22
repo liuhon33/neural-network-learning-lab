@@ -20,7 +20,7 @@ def page(title, content, *, script="", guide=False):
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="An interactive neural network learning lab: compare plain and residual networks, features, weights, gradients, and loss in your browser.">
 <title>{title} · Neural Network Learning Lab</title><style>{styles}</style></head>
-<body><header class="site-header"><nav aria-label="Main navigation"><a class="brand" href="index.html">NEURAL NETWORK LEARNING LAB</a>{nav}<a href="guide.html" target="_blank" rel="noopener">How to use</a><a href="https://github.com/liuhon33/neural-network-learning-lab" target="_blank" rel="noopener">GitHub ↗</a></nav>
+<body class="{'guide-page' if guide else 'lab-page'}"><header class="site-header"><nav aria-label="Main navigation"><a class="brand" href="index.html">NEURAL NETWORK LEARNING LAB</a>{nav}<a href="guide.html" target="_blank" rel="noopener">How to use</a><a href="https://github.com/liuhon33/neural-network-learning-lab" target="_blank" rel="noopener">GitHub ↗</a></nav>
 <div class="eyebrow">An open learning experiment by Hongrui Liu</div><h1>{heading}</h1><p class="intro">{intro}</p>
 {'' if guide else '<p class="muted">Start with <strong>One update</strong> or <strong>Train 500 updates</strong>. Defaults: 36 blocks × 10 features · Adam 0.003 · seed 7. Runs on your device; reloading resets the experiment.</p>'}</header>
 <main{' class="guide"' if guide else ''}>{content}</main>

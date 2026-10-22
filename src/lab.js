@@ -206,6 +206,26 @@ function applyVisibility(){
  if(nets)draw();
 }
 for(const input of root.querySelectorAll('.workspace-options input,#show-widths'))input.addEventListener('change',applyVisibility);
+const compactWorkspace=matchMedia('(max-width:1099px)');
+function setWorkspaceOpen(open,restoreFocus=false){
+ const visible=compactWorkspace.matches&&open;
+ root.classList.toggle('workspace-open',visible);
+ $('#workspace-toggle').setAttribute('aria-expanded',String(visible));
+ $('.workspace-backdrop').hidden=!visible;
+ if(visible)$('#show-architecture').focus({preventScroll:true});
+ else if(restoreFocus&&compactWorkspace.matches)$('#workspace-toggle').focus({preventScroll:true});
+}
+$('#workspace-toggle').onclick=()=>setWorkspaceOpen(!root.classList.contains('workspace-open'),true);
+$('.workspace-backdrop').onclick=()=>setWorkspaceOpen(false,true);
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&root.classList.contains('workspace-open')){event.preventDefault();setWorkspaceOpen(false,true)}});
+compactWorkspace.addEventListener('change',()=>setWorkspaceOpen(false));
+// Measure actual wrapping, including status text, so the fixed bar never covers
+// the start of the page or an anchor target after a viewport/font-size change.
+function syncTrainingDock(){
+ const height=Math.ceil($('.training-toolbar').getBoundingClientRect().height)+'px';
+ if(document.documentElement.style.getPropertyValue('--training-dock-height')!==height)document.documentElement.style.setProperty('--training-dock-height',height);
+}
+new ResizeObserver(syncTrainingDock).observe($('.training-toolbar'));syncTrainingDock();
 root.__test={runUpdates,applyVisibility,loadPreset,Net,target,fitPCA,projectPCA,update,draw,surfaceData,featureData,gradientData,sliceData,lineChart,trainSelectedExample,getState:()=>({nets,step,points,camera,widths:widths.slice(),samplesSeen,batchCursor,order:order.slice(),running,history:inspection.history,lastBatch:inspection.lastBatch,singleSteps:inspection.singleSteps})};buildWidthControls();init();
 applyVisibility();
 new ResizeObserver(()=>{drawSurfaces();drawInspector()}).observe($('#rs-target-surface'));

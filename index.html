@@ -82,20 +82,55 @@
 @media(max-width:800px){main,.site-header,.site-footer{padding:20px}#rs-lab .rs-feature-grid,#rs-lab .rs-surface-grid,#rs-lab.with-correction .rs-feature-grid{grid-template-columns:1fr}#rs-lab .rs-feature-grid h3{min-height:0}#rs-lab .rs-feature-caption{max-width:520px;margin:auto}#rs-lab .rs-diagnostic-row{grid-template-columns:1fr}#rs-lab .rs-feature-plot{max-width:520px;margin:auto}#rs-lab .rs-surface{max-width:600px;margin:auto}}
 @media(max-width:420px){main,.site-header,.site-footer{padding:14px}#rs-lab .training-toolbar{padding:12px}#rs-lab .training-toolbar>.btn{flex:1 1 110px}#rs-lab .workspace-options{padding:12px}#rs-lab .rs-setup{flex-direction:column;align-items:stretch}#rs-lab .rs-heatmaps{grid-template-columns:1fr}.site-header nav{gap:12px 18px}.brand{width:100%}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-@media(min-width:1100px){html{scroll-padding-top:190px}#rs-lab .training-toolbar{position:sticky;top:8px;z-index:10}}
+/* Reserve space for the fixed controls so plots and anchor targets stay clear. */
+html:has(.lab-page){scroll-padding-top:calc(var(--training-dock-height,210px) + 32px)}
+.lab-page{--workspace-rail:280px;padding-left:var(--workspace-rail);padding-top:calc(var(--training-dock-height,210px) + 24px)}
+#rs-lab .workspace-options{position:fixed;left:16px;top:16px;width:calc(var(--workspace-rail) - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;z-index:25;padding:20px 16px;margin:0}
+#rs-lab .workspace-options h2{font-size:20px;margin:0 0 12px;line-height:1.35}
+#rs-lab .workspace-options .muted{font-size:14px;line-height:1.5}
+#rs-lab .option-list{display:flex;flex-direction:column;gap:6px;margin-top:18px}
+#rs-lab .option-list label{font-size:17px;line-height:1.4;min-height:44px;align-items:center}
+#rs-lab .option-list input{width:20px;height:20px}
+#rs-lab .training-toolbar{position:fixed;left:calc(var(--workspace-rail) + 32px);right:32px;top:16px;z-index:30;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;padding:16px;margin:0;box-shadow:0 5px 20px light-dark(#18233114,#0005)}
+#rs-lab .training-toolbar>.btn{min-height:56px;padding:10px 12px;font-size:18px;line-height:1.35}
+#rs-lab .training-heading{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:16px}
+#rs-lab .training-heading h2{font-size:20px;margin:0}
+#rs-lab .training-toolbar .run-status,#rs-lab .training-toolbar #rs-info{grid-column:1/-1}
+#rs-lab .training-toolbar .run-status{font-size:15px;gap:10px;min-height:0}
+#rs-lab .training-toolbar #rs-info{font-size:14px}
+#rs-lab .workspace-toggle,#rs-lab .button-short{display:none}
+#rs-lab .workspace-backdrop{position:fixed;inset:0;z-index:20;background:#0005;border:0;padding:0;cursor:default}
+@media(max-width:1099px){
+ .lab-page{--workspace-rail:0px;padding-left:0;padding-top:calc(var(--training-dock-height,210px) + 16px)}
+ #rs-lab .training-toolbar{left:12px;right:12px;top:8px;gap:8px;padding:12px}
+ #rs-lab .workspace-toggle{display:inline-flex;font-size:15px;min-height:40px;padding:6px 12px}
+ #rs-lab .training-toolbar .button-long{display:none}
+ #rs-lab .training-toolbar .button-short{display:inline}
+ #rs-lab .workspace-options{left:12px;top:calc(var(--training-dock-height,210px) + 16px);width:min(280px,calc(100vw - 24px));max-height:calc(100dvh - var(--training-dock-height,210px) - 28px);visibility:hidden;box-shadow:0 8px 24px #0003}
+ #rs-lab.workspace-open .workspace-options{visibility:visible}
+}
+@media(max-width:600px){
+ #rs-lab .training-toolbar{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #rs-lab .training-toolbar>.btn{min-height:48px;font-size:18px;padding:8px}
+ #rs-lab .training-heading{gap:8px}
+ #rs-lab .training-heading h2{font-size:18px}
+ #rs-lab .training-toolbar .run-status{display:grid;grid-template-columns:54px minmax(0,1fr);font-size:12px;line-height:1.35}
+ #rs-lab #rs-progress{width:54px}
+ #rs-lab .training-toolbar #rs-info{font-size:12px;line-height:1.35}
+}
 </style></head>
-<body><header class="site-header"><nav aria-label="Main navigation"><a class="brand" href="index.html">NEURAL NETWORK LEARNING LAB</a><a href="#rs-views-panel">Feature maps</a><a href="#rs-training-diagnostics">Learning curves</a><a href="guide.html" target="_blank" rel="noopener">How to use</a><a href="https://github.com/liuhon33/neural-network-learning-lab" target="_blank" rel="noopener">GitHub ↗</a></nav>
+<body class="lab-page"><header class="site-header"><nav aria-label="Main navigation"><a class="brand" href="index.html">NEURAL NETWORK LEARNING LAB</a><a href="#rs-views-panel">Feature maps</a><a href="#rs-training-diagnostics">Learning curves</a><a href="guide.html" target="_blank" rel="noopener">How to use</a><a href="https://github.com/liuhon33/neural-network-learning-lab" target="_blank" rel="noopener">GitHub ↗</a></nav>
 <div class="eyebrow">An open learning experiment by Hongrui Liu</div><h1>See what changes as a network learns.</h1><p class="intro">Train a plain network and a residual network on the same landscape. Follow the signals, inspect the weights, and test your own explanations.</p>
 <p class="muted">Start with <strong>One update</strong> or <strong>Train 500 updates</strong>. Defaults: 36 blocks × 10 features · Adam 0.003 · seed 7. Runs on your device; reloading resets the experiment.</p></header>
-<main><noscript>This lab needs JavaScript to train networks and draw the plots.</noscript><div id="rs-lab"><div class="workspace-options" aria-label="Choose optional panels">
-<div><strong>Choose your workspace</strong><span class="muted">Core plots stay visible. Add details when you need them.</span></div>
+<main><noscript>This lab needs JavaScript to train networks and draw the plots.</noscript><div id="rs-lab"><button class="workspace-backdrop" type="button" aria-label="Close workspace options" hidden></button><aside class="workspace-options" id="workspace-options" aria-labelledby="workspace-heading">
+<div><h2 id="workspace-heading">Choose your workspace</h2><span class="muted">Core plots stay visible. Add details when you need them.</span></div>
 <div class="option-list">
 <label><input type="checkbox" id="show-architecture"> Architecture</label>
 <label><input type="checkbox" id="show-correction"> Residual correction</label>
 <label><input type="checkbox" id="show-values"> Exact signals</label>
 <label><input type="checkbox" id="show-heatmaps"> Weights and gradients</label>
 <label><input type="checkbox" id="show-slices"> One-weight experiment</label>
-</div></div>
+</div></aside>
 
 <section class="lab-panel" hidden="" id="rs-configuration-panel"><h2>Architecture and training data</h2>
 <div class="preset-row"><span>Start a new comparison:</span><button class="btn" id="preset-deep" type="button">Deep · 36 × 10</button><button class="btn" id="preset-small" type="button">Small · 3 × 2</button><span class="muted">Presets reset both models.</span></div><div class="rs-setup">
@@ -111,8 +146,8 @@
 <div class="rs-note" id="rs-shortcuts"></div>
 <div class="rs-note">Changing widths, depth, sample count, or seed resets both networks. The input remains 2D and the final output remains one number.</div>
 </section>
-<div class="rs-actions training-toolbar"><button class="btn btn-primary" id="rs-step" type="button">One update</button><button class="btn" id="rs-run" type="button">Train 100 updates</button><button class="btn" id="rs-run-500" type="button">Train 500 updates</button><button class="btn" id="rs-run-1000" type="button">Train 1,000 updates</button><button class="btn" id="rs-pause" type="button" disabled>Pause</button>
-<button class="btn" id="rs-init" type="button">Reset weights</button><div class="run-status"><progress id="rs-progress" max="1" value="0" aria-label="Requested training updates completed"></progress><span id="rs-run-status" role="status">Ready. Each update uses a batch of up to 128 examples.</span></div><span aria-live="polite" id="rs-info"></span></div>
+<section class="rs-actions training-toolbar" aria-labelledby="training-heading"><div class="training-heading"><h2 id="training-heading">Training updates</h2><button class="btn workspace-toggle" id="workspace-toggle" type="button" aria-expanded="false" aria-controls="workspace-options">Workspace</button></div><button class="btn btn-primary" id="rs-step" type="button" aria-label="Perform one training update"><span class="button-long">One update</span><span class="button-short" aria-hidden="true">+1</span></button><button class="btn" id="rs-run" type="button" aria-label="Train 100 additional updates"><span class="button-long">Train 100 updates</span><span class="button-short" aria-hidden="true">+100</span></button><button class="btn" id="rs-run-500" type="button" aria-label="Train 500 additional updates"><span class="button-long">Train 500 updates</span><span class="button-short" aria-hidden="true">+500</span></button><button class="btn" id="rs-run-1000" type="button" aria-label="Train 1,000 additional updates"><span class="button-long">Train 1,000 updates</span><span class="button-short" aria-hidden="true">+1,000</span></button><button class="btn" id="rs-pause" type="button" disabled>Pause</button>
+<button class="btn" id="rs-init" type="button" aria-label="Reset both networks' weights and training history"><span class="button-long">Reset weights</span><span class="button-short" aria-hidden="true">Reset</span></button><div class="run-status"><progress id="rs-progress" max="1" value="0" aria-label="Requested training updates completed"></progress><span id="rs-run-status" role="status">Ready. Each update uses a batch of up to 128 examples.</span></div><span aria-live="polite" id="rs-info"></span></section>
 <section class="lab-panel" id="rs-input-panel"><h2>Follow one input</h2>
 <div class="rs-inputs">
 <div class="rs-control"><div class="rs-control-heading"><label for="rs-x">Input x₁</label><input aria-label="Input x1 numeric value" class="form-control rs-number" id="rs-x-value" max="2" min="-2" step="0.05" type="number" value="0.50"/></div><input aria-label="Input x1 slider" class="form-range" id="rs-x" max="2" min="-2" step="0.05" type="range" value="0.5"/></div>
@@ -682,6 +717,26 @@ function applyVisibility(){
  if(nets)draw();
 }
 for(const input of root.querySelectorAll('.workspace-options input,#show-widths'))input.addEventListener('change',applyVisibility);
+const compactWorkspace=matchMedia('(max-width:1099px)');
+function setWorkspaceOpen(open,restoreFocus=false){
+ const visible=compactWorkspace.matches&&open;
+ root.classList.toggle('workspace-open',visible);
+ $('#workspace-toggle').setAttribute('aria-expanded',String(visible));
+ $('.workspace-backdrop').hidden=!visible;
+ if(visible)$('#show-architecture').focus({preventScroll:true});
+ else if(restoreFocus&&compactWorkspace.matches)$('#workspace-toggle').focus({preventScroll:true});
+}
+$('#workspace-toggle').onclick=()=>setWorkspaceOpen(!root.classList.contains('workspace-open'),true);
+$('.workspace-backdrop').onclick=()=>setWorkspaceOpen(false,true);
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&root.classList.contains('workspace-open')){event.preventDefault();setWorkspaceOpen(false,true)}});
+compactWorkspace.addEventListener('change',()=>setWorkspaceOpen(false));
+// Measure actual wrapping, including status text, so the fixed bar never covers
+// the start of the page or an anchor target after a viewport/font-size change.
+function syncTrainingDock(){
+ const height=Math.ceil($('.training-toolbar').getBoundingClientRect().height)+'px';
+ if(document.documentElement.style.getPropertyValue('--training-dock-height')!==height)document.documentElement.style.setProperty('--training-dock-height',height);
+}
+new ResizeObserver(syncTrainingDock).observe($('.training-toolbar'));syncTrainingDock();
 root.__test={runUpdates,applyVisibility,loadPreset,Net,target,fitPCA,projectPCA,update,draw,surfaceData,featureData,gradientData,sliceData,lineChart,trainSelectedExample,getState:()=>({nets,step,points,camera,widths:widths.slice(),samplesSeen,batchCursor,order:order.slice(),running,history:inspection.history,lastBatch:inspection.lastBatch,singleSteps:inspection.singleSteps})};buildWidthControls();init();
 applyVisibility();
 new ResizeObserver(()=>{drawSurfaces();drawInspector()}).observe($('#rs-target-surface'));

@@ -1,12 +1,12 @@
-<div id="rs-lab"><div class="workspace-options" aria-label="Choose optional panels">
-<div><strong>Choose your workspace</strong><span class="muted">Core plots stay visible. Add details when you need them.</span></div>
+<div id="rs-lab"><button class="workspace-backdrop" type="button" aria-label="Close workspace options" hidden></button><aside class="workspace-options" id="workspace-options" aria-labelledby="workspace-heading">
+<div><h2 id="workspace-heading">Choose your workspace</h2><span class="muted">Core plots stay visible. Add details when you need them.</span></div>
 <div class="option-list">
 <label><input type="checkbox" id="show-architecture"> Architecture</label>
 <label><input type="checkbox" id="show-correction"> Residual correction</label>
 <label><input type="checkbox" id="show-values"> Exact signals</label>
 <label><input type="checkbox" id="show-heatmaps"> Weights and gradients</label>
 <label><input type="checkbox" id="show-slices"> One-weight experiment</label>
-</div></div>
+</div></aside>
 
 <section class="lab-panel" hidden="" id="rs-configuration-panel"><h2>Architecture and training data</h2>
 <div class="preset-row"><span>Start a new comparison:</span><button class="btn" id="preset-deep" type="button">Deep · 36 × 10</button><button class="btn" id="preset-small" type="button">Small · 3 × 2</button><span class="muted">Presets reset both models.</span></div><div class="rs-setup">
@@ -22,8 +22,8 @@
 <div class="rs-note" id="rs-shortcuts"></div>
 <div class="rs-note">Changing widths, depth, sample count, or seed resets both networks. The input remains 2D and the final output remains one number.</div>
 </section>
-<div class="rs-actions training-toolbar"><button class="btn btn-primary" id="rs-step" type="button">One update</button><button class="btn" id="rs-run" type="button">Train 100 updates</button><button class="btn" id="rs-run-500" type="button">Train 500 updates</button><button class="btn" id="rs-run-1000" type="button">Train 1,000 updates</button><button class="btn" id="rs-pause" type="button" disabled>Pause</button>
-<button class="btn" id="rs-init" type="button">Reset weights</button><div class="run-status"><progress id="rs-progress" max="1" value="0" aria-label="Requested training updates completed"></progress><span id="rs-run-status" role="status">Ready. Each update uses a batch of up to 128 examples.</span></div><span aria-live="polite" id="rs-info"></span></div>
+<section class="rs-actions training-toolbar" aria-labelledby="training-heading"><div class="training-heading"><h2 id="training-heading">Training updates</h2><button class="btn workspace-toggle" id="workspace-toggle" type="button" aria-expanded="false" aria-controls="workspace-options">Workspace</button></div><button class="btn btn-primary" id="rs-step" type="button" aria-label="Perform one training update"><span class="button-long">One update</span><span class="button-short" aria-hidden="true">+1</span></button><button class="btn" id="rs-run" type="button" aria-label="Train 100 additional updates"><span class="button-long">Train 100 updates</span><span class="button-short" aria-hidden="true">+100</span></button><button class="btn" id="rs-run-500" type="button" aria-label="Train 500 additional updates"><span class="button-long">Train 500 updates</span><span class="button-short" aria-hidden="true">+500</span></button><button class="btn" id="rs-run-1000" type="button" aria-label="Train 1,000 additional updates"><span class="button-long">Train 1,000 updates</span><span class="button-short" aria-hidden="true">+1,000</span></button><button class="btn" id="rs-pause" type="button" disabled>Pause</button>
+<button class="btn" id="rs-init" type="button" aria-label="Reset both networks' weights and training history"><span class="button-long">Reset weights</span><span class="button-short" aria-hidden="true">Reset</span></button><div class="run-status"><progress id="rs-progress" max="1" value="0" aria-label="Requested training updates completed"></progress><span id="rs-run-status" role="status">Ready. Each update uses a batch of up to 128 examples.</span></div><span aria-live="polite" id="rs-info"></span></section>
 <section class="lab-panel" id="rs-input-panel"><h2>Follow one input</h2>
 <div class="rs-inputs">
 <div class="rs-control"><div class="rs-control-heading"><label for="rs-x">Input x₁</label><input aria-label="Input x1 numeric value" class="form-control rs-number" id="rs-x-value" max="2" min="-2" step="0.05" type="number" value="0.50"/></div><input aria-label="Input x1 slider" class="form-range" id="rs-x" max="2" min="-2" step="0.05" type="range" value="0.5"/></div>

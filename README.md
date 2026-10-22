@@ -21,6 +21,7 @@ The [separate student guide](https://liuhon33.github.io/neural-network-learning-
 - Optional: the added residual correction, exact layer signals, signed parameter/gradient heatmaps with numeric color bars, and a single-example loss slice through one selected weight.
 - Adjustable depth (3/12/24/36), shared or individual widths (1–32), seed, and training-set size. Architecture/data changes reset both models.
 - One, 100, 500, or 1,000 additional updates, with progress and pause. Training uses matching shuffled batches and Adam at 0.003.
+- A left workspace sidebar and a larger training bar that stays visible while scrolling. On narrow screens, the Workspace button opens the sidebar.
 - Live shared PCA for hidden features wider than two dimensions, synchronized surface rotation, and explicit one-example training.
 
 This release contains the dense function-regression inspection lab. It does not include ImageNet, CNNs, pretrained models, or the separate optimizer-comparison experiment. Residual connections are useful to study, but are not a guarantee that every run succeeds. This is an educational experiment, not a benchmark claim.

@@ -88,8 +88,8 @@ try:
             time.sleep(.15)
         raise AssertionError('Timed out: '+code)
 
-    def screenshot(name):
-        (OUT/name).write_bytes(base64.b64decode(call('Page.captureScreenshot',{'captureBeyondViewport':True})['data']))
+    def screenshot(name, full=True):
+        (OUT/name).write_bytes(base64.b64decode(call('Page.captureScreenshot',{'captureBeyondViewport':full})['data']))
 
     def click(id):
         evaluate(f'document.getElementById({json.dumps(id)}).click()')
@@ -104,9 +104,13 @@ try:
     assert report['initial']['widths']==[10]*37 and report['initial']['parameters']==[4001,4001]
     assert report['initial']['samples']==1024 and report['initial']['step']==0
     assert report['initial']['mandatory'] and report['initial']['optional']
+    assert evaluate("Q('workspace-options').getBoundingClientRect().right<document.querySelector('main').getBoundingClientRect().left+32")
+    assert evaluate("document.querySelector('.site-header').getBoundingClientRect().top>document.querySelector('.training-toolbar').getBoundingClientRect().bottom")
+    screenshot('desktop-controls-top.png',False)
     assert evaluate("![...Q('rs-gradient-chart').querySelectorAll('text')].some(t=>t.textContent==='35')")
     evaluate("window.scrollTo({top:1500,behavior:'instant'})")
     assert evaluate("document.querySelector('.training-toolbar').getBoundingClientRect().top<20")
+    screenshot('desktop-controls-scrolled.png',False)
     evaluate("window.scrollTo({top:0,behavior:'instant'})")
     screenshot('desktop-default.png')
     evaluate('window.before=JSON.stringify(S().nets)')
@@ -154,12 +158,25 @@ try:
     assert evaluate('S().step===0&&S().widths[5]===6&&S().nets[1].parameterCount()>S().nets[0].parameterCount()')
     evaluate('T.loadPreset(36,10)')
     report['layouts']=[]
-    for width in [390,320]:
-        call('Emulation.setDeviceMetricsOverride',{'width':width,'height':900,'deviceScaleFactor':1,'mobile':False})
+    for width,height in [(1440,900),(1024,768),(844,390),(390,568),(320,900)]:
+        call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':False})
         time.sleep(.2)
         overflow=evaluate('document.documentElement.scrollWidth>innerWidth')
         assert not overflow,('horizontal overflow',width)
-        report['layouts'].append({'width':width,'overflow':overflow})
+        for position in ['0','document.documentElement.scrollHeight/2','document.documentElement.scrollHeight']:
+            evaluate('window.scrollTo({top:'+position+",behavior:'instant'})")
+            assert evaluate("['rs-step','rs-run','rs-run-500','rs-run-1000','rs-pause','rs-init'].every(id=>{const r=Q(id).getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&r.left>=0&&r.right<=innerWidth&&document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('button')===Q(id)})"),('Controls obscured',width,height,position)
+        if width<1100:
+            evaluate('window.drawerBefore=JSON.stringify(S().nets)')
+            click('workspace-toggle')
+            assert evaluate("Q('workspace-toggle').getAttribute('aria-expanded')==='true'&&getComputedStyle(Q('workspace-options')).visibility==='visible'")
+            assert evaluate("Q('workspace-options').getBoundingClientRect().left===12&&Q('workspace-options').getBoundingClientRect().bottom<=innerHeight")
+            if width==390:
+                screenshot('mobile-workspace-open.png',False)
+            evaluate("document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}))")
+            assert evaluate("Q('workspace-toggle').getAttribute('aria-expanded')==='false'&&document.activeElement===Q('workspace-toggle')&&JSON.stringify(S().nets)===drawerBefore")
+        report['layouts'].append({'width':width,'height':height,'overflow':overflow,'controlsVisibleAtAllScrollPositions':True})
+    screenshot('mobile-controls-scrolled.png',False)
     screenshot('mobile-panels.png')
     call('Emulation.setDeviceMetricsOverride',{'width':1440,'height':1100,'deviceScaleFactor':1,'mobile':False})
     call('Emulation.setEmulatedMedia',{'features':[{'name':'prefers-color-scheme','value':'dark'}]})

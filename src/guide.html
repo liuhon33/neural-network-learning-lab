@@ -9,7 +9,8 @@
 <li><strong>Test a hypothesis.</strong> Enable Architecture, try the small 3 × 2 preset, or change one width. This resets both models. Compare their behavior with the deep default.</li>
 </ol>
 <h2>Choose what you want to inspect</h2>
-<p>Feature maps, prediction surfaces, loss history, and layerwise gradients stay visible. The workspace checkboxes add optional panels without resetting either model.</p>
+<p>Feature maps, prediction surfaces, loss history, and layerwise gradients stay visible. Use the <strong>left sidebar</strong> to add optional panels without resetting either model. On a narrow screen, the <strong>Workspace</strong> button opens the options from the left; press Escape or click outside to close them.</p>
+<p>The larger <strong>Training updates</strong> bar stays at the top while you scroll, so training, pause, and reset are always within reach. On narrow screens, +1, +100, +500, and +1,000 mean that many additional optimizer updates.</p>
 <ul>
 <li><strong>Architecture:</strong> choose 3, 12, 24, or 36 hidden blocks, widths from 1 to 32, a seed, and a training-set size from 128 to 4,096. You can set all widths together or enable individual widths, including the stem. Architecture, seed, and sample-count changes reset both networks.</li>
 <li><strong>Residual correction:</strong> see the scaled added correction αF(h) for the selected block. Its PCA and scale are separate from those of the hidden features. The cross marks zero correction. The stem has no residual branch.</li>
