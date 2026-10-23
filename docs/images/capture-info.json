@@ -1,0 +1,17 @@
+{
+  "settings": "36 blocks, width 10, seed 7, 1024 examples, Adam 0.003, latest-batch gradients",
+  "updates": 500,
+  "history": {
+    "step": 500,
+    "kind": "batch",
+    "train": [
+      0.11615192311814293,
+      0.002361560271606348
+    ],
+    "test": [
+      0.12716029150869945,
+      0.002612935743968178
+    ]
+  },
+  "errors": []
+}

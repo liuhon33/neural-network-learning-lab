@@ -1,79 +1,93 @@
 # Neuro Network Visualizer
 
-**Watch a neural network learn, then inspect what changed.** Compare a plain dense network and a residual network on the same two-input, one-output function. Move through hidden layers, inspect individual weights and gradients, and explore the loss around a selected parameter.
+**Watch neural networks learn. Follow their features. See where their gradients fade.**
 
-**[Open the interactive lab](https://liuhon33.github.io/neuro-network-visualizer/)** · **[How to use it](https://liuhon33.github.io/neuro-network-visualizer/guide.html)** · **[Technical guide](docs/architecture.md)**
+Why does a deeper network sometimes become harder to train? What does a residual connection actually change? And what happens inside a network between its input and its answer?
 
-No account, Python installation, GPU, or server setup is needed to play. All training runs in your browser. The page loads no third-party scripts, sends no training data to a service, and stores no model state after a reload.
+Neuro Network Visualizer is a hands-on learning lab for exploring these questions. Train a plain neural network and a residual network side by side, pause whenever something looks interesting, and inspect how each one is learning.
 
-## Start exploring
+**[Open the interactive lab →](https://liuhon33.github.io/neuro-network-visualizer/)** · **[Student guide](https://liuhon33.github.io/neuro-network-visualizer/guide.html)**
 
-1. Open the lab. It starts with **36 hidden blocks, 10 features per layer, seed 7**, and 1,024 training examples.
-2. Move the block slider and compare the hidden features and gradients before training.
-3. Choose **Train 500 updates**. Pause to inspect a fixed model; choose another training button to continue.
-4. Enable **Weights and gradients** or **One-weight experiment** for a closer look. Display choices do not reset the networks.
+Free to explore in your browser. No account, installation, coding experience, or GPU required.
 
-The [separate student guide](https://liuhon33.github.io/neuro-network-visualizer/guide.html) explains every control, what each plot measures, and experiments to try.
+## Watch a landscape take shape
 
-## What you can see
+Imagine teaching a network the shape of a landscape with hills, a valley, and a saddle. Each training example gives it a location and the height at that location. Its task is to learn how to predict the height elsewhere.
 
-- Always visible: input and hidden-feature maps, target and final prediction surfaces, loss history, and gradient magnitude across layers.
-- Optional: the added residual correction, exact layer signals, signed parameter/gradient heatmaps with numeric color bars, and a single-example loss slice through one selected weight.
-- Adjustable depth (3/12/24/36), shared or individual widths (1–32), seed, and training-set size. Architecture/data changes reset both models.
-- One, 100, 500, or 1,000 additional updates, with progress and pause. Training uses matching shuffled batches and Adam at 0.003.
-- A left workspace sidebar and a larger training bar that stays visible while scrolling. On narrow screens, the Workspace button opens the sidebar.
-- Live shared PCA for hidden features wider than two dimensions, synchronized surface rotation, and explicit one-example training.
-- Drag or tap the input grid to choose the example followed throughout both networks. Arrow keys provide small adjustments; coordinates stay visible below the grid.
+The lab shows the target landscape beside the two networks' predictions. As you train, their surfaces change. You can see a hill emerge, a valley deepen, or a prediction remain nearly flat even while the network keeps receiving examples.
 
-This release contains the dense function-regression inspection lab. It does not include ImageNet, CNNs, pretrained models, or the separate optimizer-comparison experiment. Residual connections are useful to study, but are not a guarantee that every run succeeds. This is an educational experiment, not a benchmark claim.
+![Input features and prediction surfaces after 500 training updates: target on the left, plain network in blue, residual network in orange.](docs/images/features-and-predictions-after-500-updates.png)
 
-## Run or modify it locally
+*An actual run: 36 hidden blocks, 10 features per layer, seed 7, and 500 updates. The upper plots show internal features; the lower plots show predicted heights over the original input coordinates. These are different views of the same models.*
 
-Download the repository and open `index.html` in a modern browser. It is self-contained and also works offline. Alternatively:
+For comparison, [see the same networks before training](docs/images/features-at-initialization.png).
 
-```sh
-git clone https://github.com/liuhon33/neuro-network-visualizer.git
-cd neuro-network-visualizer
-python -m http.server 8000
-```
+Seeing the surface change makes “learning a function” concrete. The loss curve tells you how much error remains; the landscape shows you what that error looks like.
 
-Open `http://localhost:8000`. Python is needed only for this optional local server or rebuilding the files.
+## Why compare with ResNet?
 
-Edit the files in `src/`, then regenerate the committed standalone pages:
+In 2015, Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun introduced **residual networks**, or **ResNets**, to make very deep networks easier to train. Their work evaluated image-recognition networks up to 152 layers deep, and an ensemble won the ImageNet 2015 classification competition. [Read the original paper.](https://arxiv.org/abs/1512.03385)
 
-```sh
-python scripts/build.py
-node tests/numerics.cjs
-```
+The central idea is approachable: a block can pass its input forward through a **shortcut**, then add a learned correction. This correction is the *residual*. A block can make a small adjustment while keeping a direct route for the incoming signal.
 
-The builder needs only Python's standard library. Numerical tests need Node.js. Optional browser checks use Chrome/Chromium and Python's `websocket-client` package:
+That route also matters during learning. A **gradient** measures how changing a weight would change the loss. In a deep network, these learning signals must travel backward through many layers and can become extremely small. Residual shortcuts provide a more direct route for them. The authors' [2016 identity-mapping study](https://arxiv.org/abs/1603.05027) examines this forward and backward flow.
 
-```sh
-python -m pip install websocket-client
-python tests/browser_smoke.py
-```
+This lab brings the residual idea into a small, visible function-learning task. It uses dense networks rather than reproducing the original image-recognition ResNet. You can inspect the behavior directly, without needing an image dataset or a long training run.
 
-Set `CHROME_PATH` if Chrome is not found automatically. Screenshots and test results go into ignored `verification/`. See [verification and limitations](docs/architecture.md#verification-and-limitations).
+## Follow the learning signal
 
-## Project map
+The lab connects several views so that an observation in one plot can become a question for another.
 
-| Path | Purpose |
+| Explore | What it helps you understand |
 | --- | --- |
-| `index.html`, `guide.html` | Generated, ready-to-host pages |
-| `src/dense-engine.js` | Forward pass, analytic backpropagation, Adam, parameter sweeps, PCA |
-| `src/inspector.js` | Gradient sources, history, heatmaps, loss slices |
-| `src/lab.js`, `src/lab.html`, `src/lab.css` | Interactive experiment and original plot layout |
-| `src/site.css`, `src/guide.html` | Public website styling and student instructions |
-| `scripts/build.py` | Reproducible standalone-page builder |
-| `tests/` | Numerical and browser verification |
-| `docs/architecture.md` | Equations, design choices, hosting, extension workflow |
+| **Input and hidden-feature maps** | Drag one point on the input grid and follow it through both networks. Move the block slider to see how successive layers transform the same inputs. |
+| **Prediction surfaces** | Compare what each model currently predicts with the landscape it is trying to learn. Rotate the surfaces together to inspect their shape. |
+| **Loss curves** | Watch prediction error over training. Does it fall steadily, fluctuate, or stop improving? |
+| **Gradients across layers** | See where weight gradients are large or tiny, from the first layer to the output. Compare early layers in the plain and residual networks. |
+| **Residual corrections** | Inspect the adjustment added by a selected residual block, separately from its output. |
+| **Weight and gradient heatmaps** | Explore individual parameters and their gradients, with color legends and exact values. |
+| **One-weight experiments** | Pause training and preview how changing one weight affects one example's loss while the other weights stay fixed. You can also explicitly train on that single example. |
 
-## Hosting and contributions
+![Loss history and gradient magnitude across layers for both networks after 500 updates.](docs/images/learning-after-500-updates.png)
 
-The public site is served by **GitHub Pages from `main`, repository root**. Committing rebuilt pages updates the site. A fork can enable the same setup in Settings → Pages. Change the repository links in `scripts/build.py`, the guide, and README for your fork.
+*Left: how error changes over successive updates. Right: how gradient magnitude differs across layers at the displayed state. Blue is the plain network; orange is the residual network. The vertical scales are logarithmic, making very small gradients visible.*
 
-For this small lab, static hosting is sufficient: each visitor supplies the computation through their browser. A backend becomes relevant for larger image models, shared saved experiments, or GPU training; see the [hosting tradeoffs](docs/architecture.md#hosting-tradeoffs).
+The dots in a hidden-feature plot represent **inputs transformed by the network**, not the weights themselves. When a layer has more than two features, the lab uses PCA to show a two-dimensional summary and reports how much variation it retains. This projection can change as training progresses.
 
-Bug reports and focused improvements are welcome. Include architecture, widths, seed, sample count, update count, selected input, gradient source, and browser when reporting a numerical or display issue. Changes to the learning equations should include a numerical check and update the technical guide.
+## Your first experiment
 
-Created by Hongrui Liu from an interactive learning project developed with AI coding assistance. Released under the [MIT License](LICENSE).
+1. **Open the lab and keep the defaults:** 36 hidden blocks, with 10 features in each layer.
+2. **Look before training.** Move the block slider from early to late layers. Compare how spread out the feature clouds are, then look at the gradients near the beginning of each network.
+3. **Train 500 updates.** Watch the prediction surfaces and loss curves change. Pause to explore a fixed state; resume when you are ready.
+4. **Follow one input.** Drag the highlighted point on the first grid. See where it goes inside each model and what height each model predicts.
+5. **Ask one new question.** Try fewer blocks, a different width, or another seed. Architecture and data changes reset both networks so you can start a fresh comparison.
+
+Use the left-hand workspace options to add details as you need them. Feature maps, prediction surfaces, loss curves, and layer-gradient curves remain visible, and the training controls stay within reach while you scroll.
+
+The [student guide](https://liuhon33.github.io/neuro-network-visualizer/guide.html) explains the controls and offers more experiments.
+
+## Learn by changing something and watching what happens
+
+This project began with a desire to understand *why* residual networks work: to connect the final prediction with the features, weights, gradients, and corrections that produce it. It grew around a simple learning habit: make a prediction, change one thing, and inspect the result.
+
+You might ask:
+
+- Does a network lose distinctions between inputs before it has even trained?
+- When the loss stops improving, are the early layers still receiving useful gradients?
+- What does a residual block add to the signal it receives?
+- Does changing an early weight affect the prediction differently from changing a late weight?
+- How does increasing depth or width change the behavior?
+
+Both networks see the same training examples and batches. That makes comparisons easier to interpret, while leaving room to discover how much initialization and architecture matter. Residual connections do not guarantee successful learning, and one run cannot establish which model always performs better. A smooth loss curve also does not, by itself, prove that the entire loss landscape is smooth.
+
+The goal is to make the connection between equations and behavior something students can investigate for themselves. It is designed for independent exploration, classroom demonstrations, and conversations about what a neural network is actually doing while it learns.
+
+## Keep exploring
+
+- **[Play with the lab](https://liuhon33.github.io/neuro-network-visualizer/)** — start an experiment immediately.
+- **[Read the student guide](https://liuhon33.github.io/neuro-network-visualizer/guide.html)** — learn the controls and how to interpret the plots.
+- **[Original README and developer setup](README-legacy.md)** — preserved project structure, local setup, testing, and hosting instructions.
+- **[Technical guide](docs/architecture.md)** — mathematics, implementation choices, and ideas for extending the lab.
+- **[Share a question or report an issue](https://github.com/liuhon33/neuro-network-visualizer/issues)** — include your settings and what you observed.
+
+Created by Hongrui Liu from an interactive learning project developed with AI coding assistance. Released under the [MIT License](LICENSE), so students and educators can reuse and adapt it.
