@@ -1,0 +1,100 @@
+{
+  "counts": [
+    27,
+    27
+  ],
+  "samples": 1024,
+  "surfaceSizes": [
+    625,
+    625,
+    625
+  ],
+  "finite": true,
+  "canvases": 3,
+  "sharedZ": true,
+  "numericBox": {
+    "width": 112,
+    "height": 48,
+    "font": "18px"
+  },
+  "sliderHitAreaHeight": 44,
+  "layout": {
+    "width": 1408,
+    "scroll": 1393
+  },
+  "inlineErrors": 0,
+  "servedPage": {
+    "url": "http://127.0.0.1:8765/02-two-feature-signals/index.html",
+    "sha256": "b0fc4765529bf61161df95654c7351703abb40ad585a350e37a57232ab6116a3",
+    "matchesSavedExport": true
+  },
+  "inspector": {
+    "maxSlopeError": 2.9437077775362752e-12,
+    "maxPreviewError": 0,
+    "previewPreservesState": true,
+    "gradientSources": true,
+    "oneExampleStep": true,
+    "projectionSelection": true,
+    "depths": [
+      {
+        "depth": 24,
+        "controls": 25
+      },
+      {
+        "depth": 36,
+        "controls": 37
+      }
+    ],
+    "maxShapeMs": 837.7000000476837,
+    "historyLength": 21,
+    "step": 20,
+    "chartAxes": [
+      {
+        "id": "rs-plain-slice",
+        "min": 0,
+        "max": 1.159062555034621
+      },
+      {
+        "id": "rs-res-slice",
+        "min": 0,
+        "max": 1.159062555034621
+      },
+      {
+        "id": "rs-loss-chart",
+        "min": -1,
+        "max": 1
+      },
+      {
+        "id": "rs-gradient-chart",
+        "min": -1,
+        "max": 1
+      }
+    ],
+    "smallGradientsDistinct": true,
+    "responsive": [
+      {
+        "width": 358,
+        "scroll": 343,
+        "charts": true,
+        "chartTextPixels": 13,
+        "lastRow": "rs-training-diagnostics"
+      },
+      {
+        "width": 288,
+        "scroll": 273,
+        "charts": true,
+        "chartTextPixels": 11.483333333333333,
+        "lastRow": "rs-training-diagnostics"
+      }
+    ],
+    "folds": {
+      "panels": 10,
+      "expandedHeight": 5132.515625,
+      "compactHeight": 871.25,
+      "modelUnchangedByFolding": true,
+      "trainingWhileFolded": true,
+      "reopenedPlotsCurrent": true
+    }
+  },
+  "browserErrors": []
+}

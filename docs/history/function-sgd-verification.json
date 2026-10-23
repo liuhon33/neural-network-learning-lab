@@ -1,0 +1,320 @@
+{
+  "url": "http://127.0.0.1:8765/01-function-regression/index.html",
+  "matchesSavedExport": true,
+  "servedSha256": "231bb030c344732fadbfd67a6371d7d81ab0dc624ed662dde2636d679d378005",
+  "runs": [
+    {
+      "rate": "0.001",
+      "initial": {
+        "steps": 0,
+        "button": "Train",
+        "status": "Update 0 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.001",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 0,
+          "train": [
+            0.15721338365456716,
+            0.34947361277513256
+          ],
+          "test": [
+            0.1636292820862171,
+            0.38306896503027865
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.1572",
+          "Residual \u00b7 final train MSE 0.3495"
+        ]
+      },
+      "final": {
+        "steps": 1500,
+        "button": "Train",
+        "status": "Update 1500 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.001",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 1500,
+          "train": [
+            0.12998208421232174,
+            0.12157135214898245
+          ],
+          "test": [
+            0.1341626873523143,
+            0.12633890249021842
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.1300",
+          "Residual \u00b7 final train MSE 0.1216"
+        ]
+      },
+      "resume": {
+        "steps": 1503,
+        "button": "Train",
+        "status": "Update 1503 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.001",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 1503,
+          "train": [
+            0.12997184205050166,
+            0.12156157612505113
+          ],
+          "test": [
+            0.13409060057802213,
+            0.12630499450279928
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.1300",
+          "Residual \u00b7 final train MSE 0.1216"
+        ]
+      }
+    },
+    {
+      "rate": "0.003",
+      "initial": {
+        "steps": 0,
+        "button": "Train",
+        "status": "Update 0 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.003",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 0,
+          "train": [
+            0.15721338365456716,
+            0.34947361277513256
+          ],
+          "test": [
+            0.1636292820862171,
+            0.38306896503027865
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.1572",
+          "Residual \u00b7 final train MSE 0.3495"
+        ]
+      },
+      "final": {
+        "steps": 1500,
+        "button": "Train",
+        "status": "Update 1500 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.003",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 1500,
+          "train": [
+            0.12533248135271222,
+            0.10199435994972238
+          ],
+          "test": [
+            0.12979032662285722,
+            0.11065624908742593
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.1253",
+          "Residual \u00b7 final train MSE 0.1020"
+        ]
+      },
+      "resume": {
+        "steps": 1503,
+        "button": "Train",
+        "status": "Update 1503 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.003",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 1503,
+          "train": [
+            0.12527009130029615,
+            0.10191998543711242
+          ],
+          "test": [
+            0.12951415309126957,
+            0.11051675878602994
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.1253",
+          "Residual \u00b7 final train MSE 0.1019"
+        ]
+      }
+    },
+    {
+      "rate": "0.01",
+      "initial": {
+        "steps": 0,
+        "button": "Train",
+        "status": "Update 0 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.01",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 0,
+          "train": [
+            0.15721338365456716,
+            0.34947361277513256
+          ],
+          "test": [
+            0.1636292820862171,
+            0.38306896503027865
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.1572",
+          "Residual \u00b7 final train MSE 0.3495"
+        ]
+      },
+      "final": {
+        "steps": 1500,
+        "button": "Train",
+        "status": "Update 1500 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.01",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 1500,
+          "train": [
+            0.058333582889204295,
+            0.06207341511377741
+          ],
+          "test": [
+            0.079818479206487,
+            0.08213529043960884
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.0583",
+          "Residual \u00b7 final train MSE 0.0621"
+        ]
+      },
+      "resume": {
+        "steps": 1503,
+        "button": "Train",
+        "status": "Update 1503 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.01",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 1503,
+          "train": [
+            0.07363715623196276,
+            0.0617583747426744
+          ],
+          "test": [
+            0.09557048664607656,
+            0.08182899433530222
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.0736",
+          "Residual \u00b7 final train MSE 0.0618"
+        ]
+      }
+    },
+    {
+      "rate": "0.03",
+      "initial": {
+        "steps": 0,
+        "button": "Train",
+        "status": "Update 0 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.03",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 0,
+          "train": [
+            0.15721338365456716,
+            0.34947361277513256
+          ],
+          "test": [
+            0.1636292820862171,
+            0.38306896503027865
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.1572",
+          "Residual \u00b7 final train MSE 0.3495"
+        ]
+      },
+      "final": {
+        "steps": 1500,
+        "button": "Train",
+        "status": "Update 1500 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.03",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 1500,
+          "train": [
+            0.011276418409334762,
+            0.011959774134310857
+          ],
+          "test": [
+            0.017585024092337247,
+            0.025442742729166645
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.0113",
+          "Residual \u00b7 final train MSE 0.0120"
+        ]
+      },
+      "resume": {
+        "steps": 1503,
+        "button": "Train",
+        "status": "Update 1503 \u00b7 residual scale 0.289",
+        "optimizer": "SGD",
+        "lr": "0.03",
+        "depth": "12",
+        "seed": "7",
+        "displayedLayer": "12",
+        "latest": {
+          "step": 1503,
+          "train": [
+            0.017016148964285136,
+            0.012992780981484951
+          ],
+          "test": [
+            0.020344942768884943,
+            0.02140982132069029
+          ]
+        },
+        "labels": [
+          "Plain \u00b7 final train MSE 0.0170",
+          "Residual \u00b7 final train MSE 0.0130"
+        ]
+      }
+    }
+  ],
+  "browserErrors": []
+}

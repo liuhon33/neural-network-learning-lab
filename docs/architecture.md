@@ -1,5 +1,7 @@
 # How the lab works and how to build on it
 
+For the project's learning history, read the [ResNet learning summary](resnet-learning-summary.md). For a broader workflow and reusable prompt for studying other architectures, see the [visualization playbook](neural-network-visualization-playbook.md). Their historical results are distinguished from this public implementation in the [publication notes](history/README.md).
+
 ## Learning approach
 
 The motivating question was: **why can a residual network remain trainable when a deep plain network loses useful gradients?** A static final prediction does not show how this happens. The lab connects a selected input to its hidden features, output, loss, parameter derivatives, and a controlled intervention on a weight.

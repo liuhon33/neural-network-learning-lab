@@ -1,0 +1,47 @@
+{
+  "publicationDate": "2026-10-23",
+  "files": [
+    {
+      "source": "ResNet/verification/signal-inspector/correction-pca-wide.png",
+      "published": "docs/images/history/correction-pca-wide.png",
+      "sourceSha256": "d4dc50e278a92bd3da42e7bc3323a1d5ca574a8250fb33db0134e3adfef403aa",
+      "adaptedForPublicRepository": false
+    },
+    {
+      "source": "ResNet/verification/signal-inspector/inspector-desktop-light.png",
+      "published": "docs/images/history/inspector-desktop-light.png",
+      "sourceSha256": "e1b0d03f60f284dc0a38fa6602a253d58516d2c95b62ca25068b8a4085803b42",
+      "adaptedForPublicRepository": false
+    },
+    {
+      "source": "ResNet/verification/signal-widths/numerics.json",
+      "published": "docs/history/numerics.json",
+      "sourceSha256": "a3893315ae1e2b7a0a154112057bbd70cfd62ad6381f68f693ee873ac5d606d0",
+      "adaptedForPublicRepository": false
+    },
+    {
+      "source": "ResNet/verification/signal-inspector/inspector-verification.json",
+      "published": "docs/history/inspector-verification.json",
+      "sourceSha256": "791c799f945eaa871a542dd1d913c1423baab0b403c513246ef7107b20bd3f60",
+      "adaptedForPublicRepository": false
+    },
+    {
+      "source": "ResNet/verification/function-sgd-web/verification.json",
+      "published": "docs/history/function-sgd-verification.json",
+      "sourceSha256": "31bb125e31e68835d2d795f6cf28065db931ede5ddfd2fc0e4efdfe7be23e127",
+      "adaptedForPublicRepository": false
+    },
+    {
+      "source": "ResNet/docs/resnet-learning-summary.md",
+      "published": "docs/resnet-learning-summary.md",
+      "sourceSha256": "45dd949b54ec77ceda751b20244817839cf660fc3ea716fb99109dd06e95a12b",
+      "adaptedForPublicRepository": true
+    },
+    {
+      "source": "ResNet/docs/neural-network-visualization-playbook.md",
+      "published": "docs/neural-network-visualization-playbook.md",
+      "sourceSha256": "2737d2b6258212b59122dc5b9a933da72ef29635b2aadbbc6e8dbaebd9db829f",
+      "adaptedForPublicRepository": true
+    }
+  ]
+}

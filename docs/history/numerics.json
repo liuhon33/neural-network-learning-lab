@@ -1,0 +1,19 @@
+{
+  "environment": "pytorch_learn",
+  "torchVersion": "2.10.0+cu130",
+  "architectureCases": 16,
+  "finiteDifferenceChecks": 1268,
+  "maxFiniteDifferenceError": 1.6348313813807636e-09,
+  "maxTorchLossError": 1.1102230246251565e-16,
+  "maxTorchGradientError": 6.661338147750939e-16,
+  "maxTorchAdamUpdateError": 2.220446049250313e-16,
+  "pcaCases": 7,
+  "maxEigenvalueError": 8.526512829121202e-14,
+  "maxEigenvectorResidual": 5.361665934426229e-12,
+  "maxOrthogonalityError": 7.771561172376096e-15,
+  "pcaSignsStable": true,
+  "largestModelStepAndFullMseMs": 131.75639999999999,
+  "sliceChecks": 23,
+  "maxSliceSlopeError": 6.75874911593155e-11,
+  "previewRestoresParametersAndOptimizerState": true
+}

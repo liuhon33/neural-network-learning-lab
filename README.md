@@ -86,6 +86,8 @@ The goal is to make the connection between equations and behavior something stud
 
 - **[Play with the lab](https://liuhon33.github.io/neuro-network-visualizer/)** — start an experiment immediately.
 - **[Read the student guide](https://liuhon33.github.io/neuro-network-visualizer/guide.html)** — learn the controls and how to interpret the plots.
+- **[What we learned from the ResNet experiments](docs/resnet-learning-summary.md)** — the questions, observations, and mathematical connections that shaped this project.
+- **[A playbook for visualizing other networks](docs/neural-network-visualization-playbook.md)** — the learning approach, visualization choices, experiment protocol, and reusable prompt for future architectures.
 - **[Original README and developer setup](README-legacy.md)** — preserved project structure, local setup, testing, and hosting instructions.
 - **[Technical guide](docs/architecture.md)** — mathematics, implementation choices, and ideas for extending the lab.
 - **[Share a question or report an issue](https://github.com/liuhon33/neuro-network-visualizer/issues)** — include your settings and what you observed.
